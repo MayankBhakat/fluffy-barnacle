@@ -1,0 +1,59 @@
+
+body {
+  margin: 0;
+}
+.header {
+    
+    background: linear-gradient(to bottom, #9e9e9f, #f6f3f3);
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+  }
+  
+  .nav ul {
+    
+    list-style: none;
+    display: flex;
+  }
+  
+  .nav ul li {
+    
+    margin-right: 80px !important;
+  }
+  
+  .nav ul li a {
+    font-weight: bold;
+    text-decoration: none;
+    color:black;
+  }
+  
+  .auth-buttons button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 36px;
+    margin-right:25px;
+  }
+  
+  .auth-buttons .login-button {
+    background-color: #3498db;
+   
+  }
+  
+  .auth-buttons .register-button {
+    background-color: #e74c3c;
+  }
+  
+  

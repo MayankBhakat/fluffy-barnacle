@@ -1,0 +1,19 @@
+.spinner-parent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw; /* Use viewport width */
+    height: 300vh; /* Use viewport height */
+    background-color: rgba(0, 0, 0, 0.507);
+    z-index: 10000;
+  }
+  .spinner-border {
+    color: white !important;
+    height: 80px !important;
+    width: 80px !important;
+  }

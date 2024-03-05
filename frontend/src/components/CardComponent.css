@@ -1,0 +1,4 @@
+.sammuwq:hover{
+    transform: scale(1.1); /* Increase size on hover */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Optional: Add a box shadow for depth */
+}

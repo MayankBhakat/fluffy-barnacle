@@ -1,0 +1,13 @@
+.timer{
+    color: red;
+    font-size: 40px;
+     text-shadow: 2px 2px 6px red;
+  }
+  .bx{
+    text-align: center;
+    color: red;
+    font-size: 25px;
+    text-transform: uppercase;
+    font-weight:bold;
+  }
+  

@@ -1,0 +1,42 @@
+.footer {
+  background-color: #070707;
+  color: rgb(252, 250, 250);
+  padding: 30px 0;
+  width: 100%;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+}
+
+.footer-section {
+  max-width: 20%;
+  flex: 1; /* Flexbox for equal distribution of sections */
+  margin: 10px; /* Add some margin between sections */
+}
+
+.footer-section h3 {
+  color: #4CAF50;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+}
+
+.footer-bottom {
+  text-align: center;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 768px) {
+  .footer-section {
+    max-width: 100%; /* Take up full width on smaller screens */
+  }
+}
