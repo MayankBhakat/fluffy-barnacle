@@ -2,11 +2,12 @@ import './login.css'
 import axios from "axios";
 import { HideLoading, ShowLoading } from "../redux/alertsSlice";
 import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 
 
-import toast from "react-hot-toast";
+
 
 function LoginPage () {
   const dispatch = useDispatch();

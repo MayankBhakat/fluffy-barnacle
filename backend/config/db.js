@@ -1,11 +1,10 @@
+const mongoose = require("mongoose");
 
-import mongoose, { ConnectOptions } from "mongoose";
-
-const connectDB = async (): Promise<void> => {
+const connectDB = async () => {
     try {
         const dbUri = process.env.MONGO_URI || "mongodb://localhost:27017/defaultdatabase";
 
-        await mongoose.connect(dbUri, {} as ConnectOptions);
+        await mongoose.connect(dbUri, {});
 
         console.log("MongoDB connection SUCCESS");
     } catch (error) {
@@ -14,4 +13,4 @@ const connectDB = async (): Promise<void> => {
     }
 };
 
-export default connectDB;
+module.exports = connectDB;

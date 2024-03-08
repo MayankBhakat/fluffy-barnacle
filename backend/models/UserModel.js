@@ -1,21 +1,6 @@
-import { Schema, model, Document } from 'mongoose';
+const { Schema, model } = require('mongoose');
 
-type UserDocument = Document & {
-    name: string;
-    email: string;
-    phoneNumber?: string;
-    address?: string;
-    country?: string;
-    zipCode?: string;
-    city?: string;
-    state?: string;
-    password: string;
-    role: string;
-    verification: boolean;
-    wishlist?: string[]; // Wishlist property of type string array
-};
-
-const userSchema = new Schema<UserDocument>(
+const userSchema = new Schema(
     {
         name: {
             type: String,
@@ -50,15 +35,14 @@ const userSchema = new Schema<UserDocument>(
         },
         role: {
             type: String,
-            default:"User",
-            enum: ["User","Admin"],
-
+            default: "User",
+            enum: ["User", "Admin"],
         },
         verification: {
             type: Boolean,
             default: false,
         },
-        wishlist:{
+        wishlist: {
             type: [String],
         },
     },
@@ -67,6 +51,6 @@ const userSchema = new Schema<UserDocument>(
     }
 );
 
-const User = model<UserDocument>('User', userSchema);
+const User = model('User', userSchema);
 
-export default User;
+module.exports = User;

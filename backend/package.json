@@ -3,11 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "build": "rimraf dist && npx tsc",
-    "prestart": "npm run build",
-    "start": "node dist/server.js  && --inspect dist/server.js",
-    "preserver": "npm run build",
-    "server": "concurrently \"npx tsc -w\"  \"nodemon dist/server.js\""
+    "server": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",
