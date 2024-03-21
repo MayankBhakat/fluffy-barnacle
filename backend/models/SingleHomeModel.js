@@ -45,7 +45,11 @@ const singleHomeSchema = new Schema(
         },
         address: {
             type: String,
+        },
+        sell_rent:{
+            type: String,
         }
+
     },
     {
         timestamps: true,

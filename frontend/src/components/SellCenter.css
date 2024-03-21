@@ -1,0 +1,28 @@
+.button-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+    font-family: 'arial';
+    font-weight: none;
+    text-shadow: none;
+    gap: 20px;
+    font-size: 20px;
+    padding-left: 30%;
+    padding-right: 30%;
+  }
+  
+  .button {
+   color:white;
+    border-radius: 20px;
+    background: linear-gradient(to right, red, yellow);
+    cursor: pointer;
+    transition: all 0.3s ease; /* Add smooth transition for a more polished effect */;
+  cursor:pointer
+}
+
+.button:hover {
+  transform: scale(1.1); /* Increase size on hover */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Optional: Add a box shadow for depth */
+}
+  
+  

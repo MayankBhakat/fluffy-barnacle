@@ -6,7 +6,7 @@ import RangeSliderExample from './RangeSlider.js';
 import toast from "react-hot-toast";
 import { useNavigate } from 'react-router-dom';
 
-const Search = () => {
+const Search = (props) => {
     const navigate = useNavigate();
     const [Search_key, setSearch_key] = useState({
         type: "Type",
@@ -18,6 +18,7 @@ const Search = () => {
         size_end: 3000,
         page: 1,
         city: "Place",
+        sell_rent: props.pokemon === "rent" ? "rent" : "sell" ,
     });
 
     const [bed,setBed] = useState({name:"Bedrooms"});
@@ -31,7 +32,7 @@ const Search = () => {
        else{
        // Construct the URL with parameters
        console.log(Search_key);
-       const url = `/renthome?type=${Search_key.type}&bathrooms=${Search_key.bathrooms}&bedrooms=${Search_key.bedrooms}&city=${Search_key.city}&fees_beg=${Search_key.fees_beg}&fees_end=${Search_key.fees_end}&size_beg=${Search_key.size_beg}&size_end=${Search_key.size_end}&page=${Search_key.page}`;
+       const url = `/sell_renthome?type=${Search_key.type}&bathrooms=${Search_key.bathrooms}&bedrooms=${Search_key.bedrooms}&city=${Search_key.city}&fees_beg=${Search_key.fees_beg}&fees_end=${Search_key.fees_end}&size_beg=${Search_key.size_beg}&size_end=${Search_key.size_end}&page=${Search_key.page}&sell_rent=${Search_key.sell_rent}`;
         
        // Navigate to the constructed URL
        navigate(url);
@@ -87,7 +88,7 @@ const Search = () => {
         <div style={{ height: '600px', backgroundColor: 'white' }}>
             <div className="davtoki" style={{ color: 'linear-gradient(to right, red, yellow) !important' }}>
                 <div className="davtokaa">
-                    Search Properties For Rent
+                {props.pokemon === "rent" ? "Search Properties For Rent" : "Search Properties To Buy"}
                 </div>
                 <div className="sammyu">
 
@@ -197,7 +198,7 @@ const Search = () => {
 
                 </div>
                 <div style={{ display: "flex", paddingLeft: '10%' }}>
-                    <RangeSliderExample text={"Price Range:"} order={1} call_back1 = {get_price_left} call_back2 = {get_price_right}/>
+                    <RangeSliderExample text={"Price Range:"} order={1} call_back1 = {get_price_left} call_back2 = {get_price_right} />
                     <RangeSliderExample text={"Area Range(sqm):"} order={0} call_back1 = {get_area_left} call_back2 = {get_area_right}/>
                 </div>
                 <div className="ertyu" onClick = {sendReq}>Search</div>

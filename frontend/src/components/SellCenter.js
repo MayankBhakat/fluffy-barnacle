@@ -1,8 +1,8 @@
 import React from 'react';
-import './RentCenter.css'; // Import a CSS file for styling
+import './SellCenter.css'; // Import a CSS file for styling
 
 
-function RentCenter() {
+function SellCenter() {
   return (
     <div style={{height: '450px', backgroundColor: 'white', paddingTop: '50px', paddingLeft: '7%' ,paddingBottom:'20px'}}>
     <div style={{  display: 'flex', flexDirection: 'row'}}>
@@ -36,7 +36,7 @@ function RentCenter() {
         textShadow: '2px 2px 2px rgba(0, 0, 0, 0.5)',
         textAlign: 'center',
       }}>
-        We prioritize simplicity for Tenants, ensuring they find affordable and quality rental homes effortlessly.
+        Empowering Home Buyers to Discover Their Dream Homes Easily and Affordably.
         {/* <div className="button-container">
           <div className="button">For Tenants</div>
           <div className="button">For Landlords</div>
@@ -48,4 +48,4 @@ function RentCenter() {
   );
 }
 
-export default RentCenter;
+export default SellCenter;

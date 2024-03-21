@@ -1,21 +1,21 @@
 import Footer from "../components/Footer"
 import Header from "../components/Header"
-import RentCenter from "../components/RentCenter"
+import SellCenter from "../components/SellCenter"
 import  Search  from '../components/Search.js';
 
-import './Rent.css'
-function RentPage () {
+import './Sell.css'
+function SellPage () {
 
 
     return (
         <div className="Rent">
             <Header ></Header>
-            <RentCenter></RentCenter>
-            <Search pokemon="rent"></Search>
+            <SellCenter></SellCenter>
+            <Search pokemon={"sell"}></Search>
             <Footer ></Footer>
         </div>
     )
 
 } 
 
-export default RentPage
+export default SellPage

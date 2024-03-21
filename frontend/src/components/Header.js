@@ -2,6 +2,10 @@
 
 import React from 'react';
 import './Header.css';
+import { useSelector ,useDispatch} from "react-redux";
+import {useState,useEffect} from 'react';
+import socketIOClient from "socket.io-client";
+import { SetChatRooms ,SetSocket,SetMessageReceived} from "../redux/chatSlice";
 
 import SidebarDropdown from './SidebarDropdown'; // Import the SidebarDropdown component
 
@@ -9,6 +13,43 @@ import SidebarDropdown from './SidebarDropdown'; // Import the SidebarDropdown c
 
 
 const Header = () => {
+  const {chatRooms} = useSelector((state) => state.chat);
+  const { messageReceived } = useSelector((state) => state.chat);
+  const dispatch = useDispatch();
+  const { user } = useSelector(state => state.users);
+  const [socket, setSocket] = useState(null);
+
+//   useEffect(() => {
+    
+//     if (user?.role =="admin") {
+//         const socket = socketIOClient();
+//         socket.on("server sends message from client to admin", ({message}) => {
+//         dispatch(SetSocket({socket:socket}))
+//         dispatch(SetChatRooms({user: 'exampleUser', message: message,isAdmin:false }));
+       
+//         dispatch(SetMessageReceived({message:true}));  
+//         })
+//     }
+// },[user?.role,SetChatRooms])
+
+
+useEffect(() => {
+  console.log("useEffect triggered");
+  if (user?.role === 'admin' && !socket) {
+    
+    const newSocket = socketIOClient();
+    setSocket(newSocket);
+
+    newSocket.on('server sends message from client to admin', ({ message }) => {
+      dispatch(SetSocket({ socket: newSocket }));
+      dispatch(SetChatRooms({ user: 'exampleUser', message: message, isAdmin: false }));
+      dispatch(SetMessageReceived({ message: true }));
+    });
+  }
+}, [user, socket, dispatch]);
+
+
+
   return (
     <header className="header">
       <SidebarDropdown/>
@@ -34,7 +75,10 @@ const Header = () => {
           <li><a href="/">Home</a></li>
           <li><a href="/about">About</a></li>
           <li><a href="/services">Services</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li><a href="/admin/chats">Admin</a>
+          {messageReceived && <span className="position-absolute top-1 start-10 translate-middle p-2 bg-danger border border-light rounded-circle"></span>}
+          </li>
+
         </ul>
       </nav>
       <div className="auth-buttons">

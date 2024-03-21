@@ -16,6 +16,7 @@ const get_all_homes = async (req, res, next) => {
         const bathrooms = req.query.bathrooms || "any";
         const city = req.query.city || "";
         const type = req.query.type || "any";
+        const sell_rent = req.query.sell_rent ;
 
         if (city === "") {
             return res.status(400).send({
@@ -39,8 +40,13 @@ const get_all_homes = async (req, res, next) => {
             fees: { $gte: fees_beg, $lte: fees_end },
             size: { $gte: size_beg, $lte: size_end },
             bedrooms: { $gte: bedroom, $lte: 500 },
-            bathrooms: { $gte: bathroom, $lte: 500 }
+            bathrooms: { $gte: bathroom, $lte: 500 },
+            
         };
+
+        if (sell_rent === "rent" || sell_rent === "sell") {
+            query.sell_rent = sell_rent;
+        }
 
         if (type === "any") {
             query.type = { $in: type_arr };
@@ -147,6 +153,7 @@ const remove_house_from_wishlist = async (req, res, next) => {
 
 const get_all_houses_in_wishlist = async (req, res, next) => {
     const user_id = req.query.user_id;
+    const sell_rent=req.query.sell_rent;
     try {
         const user = await User.findById(user_id);
         if (!user) {
@@ -162,9 +169,11 @@ const get_all_houses_in_wishlist = async (req, res, next) => {
             const housedata = [];
             for (const homie of ids) {
                 const houseid = new ObjectId(homie);
+                
                 try {
                     const curr_house = await SingleHome.findById(houseid);
-                    housedata.push(curr_house);
+                    if(curr_house.sell_rent == sell_rent)housedata.push(curr_house);
+                    
                 }
                 catch (err) {
                     console.log(err);
@@ -206,9 +215,9 @@ const get_all_houses_in_wishlist = async (req, res, next) => {
 }
 
 const add_home = async(req,res,next) =>{
-    const {city,type,bedrooms,bathrooms,address,rent_price,area} = req.body;
+    const {city,type,bedrooms,bathrooms,address,rent_price,area,sell_price,rent_or_sell} = req.body;
 
-    if (!city || !type || !bedrooms || !bathrooms || !address || !rent_price || !area || req.files.length!=3 ) {
+    if ((!city || !type || !bedrooms || !bathrooms || !address || !rent_or_sell || !area || req.files.length!=3) || (rent_or_sell=="sell" && !sell_price) || ((rent_or_sell=="rent" && !rent_price) )) {
         const files = req.files;
         for(const file of files){
             const { path } = file;
@@ -257,10 +266,11 @@ const add_home = async(req,res,next) =>{
             bathrooms : parseInt(bathrooms),
             bedrooms : parseInt(bedrooms),
             type:type,
-            fees:parseInt(rent_price),
+            fees:parseInt(rent_or_sell==="rent" ? rent_price:sell_price),
             year:2021,
             address:address,
-            owner_id:'65a3743af1088ea9c527d65e'
+            owner_id:'65a3743af1088ea9c527d65e',
+            sell_rent:rent_or_sell
 
            })
 

@@ -17,8 +17,10 @@ import { Toaster } from "react-hot-toast";
 import ProtectedRoutes from "./authRoutes/protectedRoutes";
 import PublicRoutes from "./authRoutes/publicRoutes";
 import Sell_rentproperty from "./pages/Sell_rentproperty";
-
+import SellPage from "./pages/Sell";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
+import AdminChatsPage from "./pages/AdminChatsPage";
 function App() {
   const { loading } = useSelector((state) => state.alerts);
   return (
@@ -34,11 +36,13 @@ function App() {
      <Route path="/reset_password/:user_id/:unique_string" element={<PublicRoutes><ResetPassword /></PublicRoutes>} />
      <Route path="/" element={<ProtectedRoutes><HomePage /></ProtectedRoutes>} />
      <Route path="/rent" element={<ProtectedRoutes><RentPage /></ProtectedRoutes>} />
-     <Route path="/renthome" element={<ProtectedRoutes><Renthome /></ProtectedRoutes>} />
+     <Route path="/sell" element={<ProtectedRoutes><SellPage /></ProtectedRoutes>} />
+     <Route path="/sell_renthome" element={<ProtectedRoutes><Renthome /></ProtectedRoutes>} />
      <Route path="/singlerenthome/:home_id" element={<ProtectedRoutes>< SingleRentHomePage/></ProtectedRoutes>} />
      <Route path="/agentspage" element={<ProtectedRoutes><AgentsPage/></ProtectedRoutes>}/>
      <Route path="/wishlist" element={<ProtectedRoutes><WishList/></ProtectedRoutes>}/>
-     <Route path="/addproperty" element={<ProtectedRoutes><Sell_rentproperty/></ProtectedRoutes>}/>
+     <Route path="/admin/addproperty" element={<ProtectedRoutes><Sell_rentproperty/></ProtectedRoutes>}/>
+     <Route path="/admin/chats" element={<ProtectedRoutes><AdminChatsPage/></ProtectedRoutes>}/>
      </Routes>
     </BrowserRouter>
     </div>

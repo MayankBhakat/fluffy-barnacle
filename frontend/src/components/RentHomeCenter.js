@@ -23,8 +23,6 @@ function RentHomeCenter(){
     
     dispatch(ShowLoading());
     try {
-
-     
         const response = await axios.get("/api/houses/get_all_homes",{ params: search_Key });
 
         let a = (response.data.tot)%9==0 ? (response.data.tot/9) : (response.data.tot/9) +1;
@@ -52,6 +50,7 @@ function RentHomeCenter(){
     const size_beg2 = parseInt(searchParams.get('size_beg'));
     const size_end2 = parseInt(searchParams.get('size_end'));
     const page2 = searchParams.get('page');
+    const sell_rent2 = searchParams.get('sell_rent')
 
 
     const search_Key = {
@@ -64,10 +63,11 @@ function RentHomeCenter(){
       bedrooms: bedrooms2 ,
       bathrooms: bathrooms2 ,
       type: type2,
+      sell_rent:sell_rent2,
     }
     setPage_now(page_num-1);
 
-    const url = `/renthome?type=${search_Key.type}&bathrooms=${search_Key.bathrooms}&bedrooms=${search_Key.bedrooms}&city=${search_Key.city}&fees_beg=${search_Key.fees_beg}&fees_end=${search_Key.fees_end}&size_beg=${search_Key.size_beg}&size_end=${search_Key.size_end}&page=${page_num}`;
+    const url = `/sell_renthome?type=${search_Key.type}&bathrooms=${search_Key.bathrooms}&bedrooms=${search_Key.bedrooms}&city=${search_Key.city}&fees_beg=${search_Key.fees_beg}&fees_end=${search_Key.fees_end}&size_beg=${search_Key.size_beg}&size_end=${search_Key.size_end}&page=${page_num}&sell_rent=${search_Key.sell_rent}`;
 
     console.log(url);
     
@@ -93,6 +93,7 @@ function RentHomeCenter(){
     const size_beg2 = parseInt(searchParams.get('size_beg'));
     const size_end2 = parseInt(searchParams.get('size_end'));
     const page2 = searchParams.get('page');
+    const sell_rent2 = searchParams.get('sell_rent')
 
 
     const search_Key = {
@@ -105,6 +106,7 @@ function RentHomeCenter(){
       bedrooms: bedrooms2 ,
       bathrooms: bathrooms2 ,
       type: type2,
+      sell_rent:sell_rent2,
     }
 
     display_all_homes( search_Key);

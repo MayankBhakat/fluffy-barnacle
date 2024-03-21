@@ -8,10 +8,15 @@ import axios from 'axios'
 import { HideLoading, ShowLoading } from "../redux/alertsSlice";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 function Sell_RentHomeCenter(){
   const dispatch = useDispatch();
   const formRef = useRef(null);
+  const [sater,setSater] = useState(0);
+  const [sater2,setSater2] = useState(1);
+  const [curr_state1,setCurr_state1] = useState("werett2");
+  const [curr_state2,setCurr_state2] = useState("werett");
     const [formData,setFormData] = useState({
             image:[1,1,1],
             city:"",
@@ -20,14 +25,29 @@ function Sell_RentHomeCenter(){
             bathrooms:"",
             address:"",
             rent_price:"",
-            area:""
+            sell_price:"",
+            area:"",
+            rent_or_sell:"rent"
     })
-
+    const change_to_rent=()=>{
+      setCurr_state1("werett2");
+      setCurr_state2("werett");
+      setFormData({...formData,rent_or_sell:"rent"});
+      setSater(0);
+      setSater2(1);
+    }
+    const change_to_sell=()=>{
+      setCurr_state2("werett2");
+      setCurr_state1("werett");
+      setFormData({...formData,rent_or_sell:"sell"});
+      setSater(1);
+      setSater2(0);
+    }
     
     const handleSubmit = async (e) => {
       e.preventDefault(); // Prevent default form submission behavior
     
-      const { city, type, bedrooms, bathrooms, address, rent_price, area, image } = formData;
+      const { city, type, bedrooms, bathrooms, address, rent_price, area, image ,sell_price,rent_or_sell } = formData;
       const formDataToSend = new FormData(); // Create a new FormData object
     
       // Append all form data fields to the FormData object
@@ -37,7 +57,10 @@ function Sell_RentHomeCenter(){
       formDataToSend.append("bathrooms", bathrooms);
       formDataToSend.append("address", address);
       formDataToSend.append("rent_price", rent_price);
+      formDataToSend.append("sell_price", sell_price);
+      formDataToSend.append("rent_or_sell", rent_or_sell);
       formDataToSend.append("area", area);
+      
     
       // Append each image file to the FormData object with the same field name
       image.forEach((file, index) => {
@@ -87,6 +110,10 @@ function Sell_RentHomeCenter(){
       setFormData({ ...formData, rent_price: e.target.value });
     }
 
+    const handleSellChange = (e) =>{
+      setFormData({ ...formData, sell_price: e.target.value });
+    }
+
     const handleAreaChange = (e) =>{
       setFormData({ ...formData, area: e.target.value });
     }
@@ -109,7 +136,12 @@ function Sell_RentHomeCenter(){
     return(
         <div className="sell-rent-home-center-container">
           <div className="overlay"></div>
-          <form ref={formRef} style={{height:'70%',width:'50%',backgroundColor:'white',zIndex:'2',position:'absolute',marginRight:'40%',top:'10%',left:'20%'}}>
+          
+          <form ref={formRef} style={{height:'75%',width:'50%',backgroundColor:'white',zIndex:'2',position:'absolute',marginRight:'40%',top:'10%',left:'20%'}}>
+          <ButtonGroup aria-label="Basic example" style={{marginLeft:"25%",borderRadius:"10px",marginTop:"3%"}}  >
+                <Button variant="secondary"  style={{ width: "300px", textAlign: "center" }} className={curr_state1} onClick={change_to_rent}>Rent</Button>
+                <Button variant="secondary"  style={{ width: "100%", textAlign: "center" }} className={curr_state2} onClick={change_to_sell}>Sell</Button>     
+          </ButtonGroup>
           <Form.Group controlId="formFile" className="mb-3 " style={{marginLeft:'10%',marginTop:'10%',marginRight:'10%'}} onChange={handleImage1Change}>
           <Form.Label>Main pic of house (JPEG/PNG)</Form.Label>
           <Form.Control type="file" />
@@ -124,7 +156,7 @@ function Sell_RentHomeCenter(){
           </Form.Group>
 
       <div style={{display:"flex",marginTop:'6%'}}>
-      <Form.Select aria-label="Select city" style={{marginLeft:'10%',marginRight:'5%',marginBottom:'2%',flex:1}} onChange={handleCityChange} className="pokemon">
+      <Form.Select aria-label="Select city" style={{marginLeft:'10%',marginRight:'5%',marginBottom:'2%',flex:1}} onChange={handleCityChange} >
       <option >Select city</option>
         <option value="Miami">Miami</option>
         <option value="Florida">Florida</option>
@@ -139,7 +171,7 @@ function Sell_RentHomeCenter(){
       
       </div>
       <div style={{display:"flex",marginTop:'4%'}}>
-      <Form.Select aria-label="Select number of bedrooms" style={{marginLeft:'10%',marginRight:'5%',marginBottom:'2%',flex:1}} onChange={handleBedroomsChange} className="pokemon">
+      <Form.Select aria-label="Select number of bedrooms" style={{marginLeft:'10%',marginRight:'5%',marginBottom:'2%',flex:1}} onChange={handleBedroomsChange} >
       <option >Select number of bedrooms</option>
         <option value="1">1 </option>
         <option value="2">2 </option>
@@ -162,14 +194,14 @@ function Sell_RentHomeCenter(){
         <div style={{width:'100%',height:'20px',marginLeft:'10%',marginBottom:'2%'}} >Enter Rent Price</div>
       <InputGroup className="mb-3 pokmon" style={{marginLeft:'8%',paddingRight:'18%'}} onChange={handleRentChange}>
         <InputGroup.Text>$</InputGroup.Text>
-        <Form.Control aria-label="Amount (to the nearest dollar)" />
+        <Form.Control aria-label="Amount (to the nearest dollar)" disabled={sater} />
         <InputGroup.Text>.00</InputGroup.Text>
       </InputGroup>
 
       <div style={{width:'100%',height:'20px',marginLeft:'10%',marginBottom:'2%'}}>Enter Selling Price</div>
-      <InputGroup className="mb-3 " style={{marginLeft:'8%',paddingRight:'18%'}} >
+      <InputGroup className="mb-3 " style={{marginLeft:'8%',paddingRight:'18%'}} onChange={handleSellChange} >
         <InputGroup.Text>$</InputGroup.Text>
-        <Form.Control aria-label="Amount (to the nearest dollar)" />
+        <Form.Control aria-label="Amount (to the nearest dollar)" disabled={sater2}/>
         <InputGroup.Text>.00</InputGroup.Text>
       </InputGroup>
 

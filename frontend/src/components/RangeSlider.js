@@ -4,7 +4,7 @@ import { Range, getTrackBackground } from 'react-range';
 const RangeSliderExample = (props2) => {
   
   const [values, setValues] = useState([2000, 3000]);
-
+  
   const handleChange = (newValues) => {
     setValues(newValues);
     
