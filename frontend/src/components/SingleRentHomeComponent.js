@@ -33,11 +33,15 @@ const SingleRentHomeComponent =()=>{
 
     const [chat,setChat] = useState([]);
     const [messageReceived, setMessageReceived] = useState(false);
+    const [chatConnectionInfo, setChatConnectionInfo] = useState(false);
+    const [reconnect, setReconnect] = useState(false);
 
     const clientSubmitChatMsg = (e) =>{
         if(e.keyCode && e.keyCode !== 13){
             return;
         }
+        setChatConnectionInfo("");
+        setMessageReceived(false);
         const msg = document.getElementById("clientChatMsg");
         let v = msg.value.trim();
         if (v === "" || v === null || v === false || !v) {
@@ -47,36 +51,46 @@ const SingleRentHomeComponent =()=>{
         setChat((chat)=>{
             return [...chat,{client: v}];
         })
-        setMessageReceived(false);
+       
         msg.focus();
         setTimeout(() => {
              msg.value = "";
              const chatMessages = document.querySelector(".cht-msg");
              chatMessages.scrollTop = chatMessages.scrollHeight;
         }, 200)
-    }
+    };
 
     useEffect (()=>{
         console.log(user?.role);
         if(user?.role!="admin"){
+            setReconnect(false);
             const socket = socketIOClient();
-            setSocket(socket);
-            socket.on("server sends message from admin to client", (message) => {
-                console.log(message);
+            socket.on("no admin", (msg) => {
                 setChat((chat) => {
-                    return [...chat, { admin: message.message.message}];
+                    return [...chat, { admin: "no admin here now" }];
+                })
+            })
+            
+            socket.on("server sends message from admin to client", (message) => {
+                
+                setChat((chat) => {
+                    return [...chat, { admin: message}];
                 })
                 setMessageReceived(true);
                 const chatMessages = document.querySelector(".cht-msg");
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             })
+            setSocket(socket);
+            socket.on("admin closed chat", () => {
+                setChat([]); 
+                setChatConnectionInfo("Admin closed chat. Type something and submit to reconnect");
+                setReconnect(true);
+             })
         return () => socket.disconnect();
         }
-    },[user]);
+    },[user,reconnect]);
 
-    // useEffect(()=>{
 
-    // },[chat])
 
     const Remove_from_wishlist=async()=>{
         dispatch(ShowLoading());
@@ -379,6 +393,7 @@ const SingleRentHomeComponent =()=>{
                     </div>
                     <div className="chat-form">
                     <div className="cht-msg">
+                    <p>{chatConnectionInfo}</p>
                     {chat.map((item, id) => (
               <div key={id}>
                 {item.client && (

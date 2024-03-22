@@ -13,9 +13,9 @@ const AdminChatsPageComponent = ({chatRoom, roomIndex, socketUser, socket}) =>{
   useState(true);
  const [show,setShow] = useState(true);
 
-const close = () => {
+const close = (socketId) => {
   window["closeToast" + roomIndex](false);
-  setShow(false);
+  socket.emit("admin closes chat", socketId);
 
 };
 
@@ -36,6 +36,7 @@ const adminSubmitChatMsg = (e, elem) => {
     const updatedChatRoom = [...chatRoom]; // Create a shallow copy of chatRoom
 
     socket.emit("admin sends message", {
+      user: socketUser,
       message: v,
   })
     updatedChatRoom[1] = [...updatedChatRoom[1], { admin: msg.value }]; // Push new message into the copied array
@@ -60,20 +61,15 @@ useEffect(() => {
   window["closeToast" + roomIndex](true);
 },[chatRoom])
 
-// useEffect(()=>{
- 
-//   // window["closeToast" + roomIndex](true);
- 
-// },[chatRoom])
 
 
 return (
   <>
     <Toast
       // show={window["toast" + roomIndex]}
-      show={window["toast" + roomIndex]}
+      show={"toast" + roomIndex}
       // show={show}
-      onClose={() => close()}
+      onClose={() => close(chatRoom[0])}
       className="ms-4 mb-5"
     >
       <Toast.Header>

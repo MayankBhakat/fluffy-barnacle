@@ -5,7 +5,7 @@ import './Header.css';
 import { useSelector ,useDispatch} from "react-redux";
 import {useState,useEffect} from 'react';
 import socketIOClient from "socket.io-client";
-import { SetChatRooms ,SetSocket,SetMessageReceived} from "../redux/chatSlice";
+import { SetChatRooms ,SetSocket, SetMessageReceived , RemoveChatRoom} from "../redux/chatSlice";
 
 import SidebarDropdown from './SidebarDropdown'; // Import the SidebarDropdown component
 
@@ -19,34 +19,25 @@ const Header = () => {
   const { user } = useSelector(state => state.users);
   const [socket, setSocket] = useState(null);
 
-//   useEffect(() => {
-    
-//     if (user?.role =="admin") {
-//         const socket = socketIOClient();
-//         socket.on("server sends message from client to admin", ({message}) => {
-//         dispatch(SetSocket({socket:socket}))
-//         dispatch(SetChatRooms({user: 'exampleUser', message: message,isAdmin:false }));
-       
-//         dispatch(SetMessageReceived({message:true}));  
-//         })
-//     }
-// },[user?.role,SetChatRooms])
-
-
+//!socket
 useEffect(() => {
   console.log("useEffect triggered");
-  if (user?.role === 'admin' && !socket) {
+  if (user?.role === 'admin') {
     
     const newSocket = socketIOClient();
-    setSocket(newSocket);
-
-    newSocket.on('server sends message from client to admin', ({ message }) => {
+    
+    newSocket.emit("admin connected with server", user?.name + Math.floor(Math.random() * 1000000000000));
+    newSocket.on('server sends message from client to admin', ({user, message }) => {
       dispatch(SetSocket({ socket: newSocket }));
-      dispatch(SetChatRooms({ user: 'exampleUser', message: message, isAdmin: false }));
+      dispatch(SetChatRooms({ user: user, message: message, isAdmin: false }));
       dispatch(SetMessageReceived({ message: true }));
     });
+    newSocket.on("disconnected",({reason,socketId}) =>{
+      dispatch(RemoveChatRoom({socketId:socketId}));
+    })
+    return () => newSocket.disconnect();
   }
-}, [user, socket, dispatch]);
+}, [user]);
 
 
 

@@ -36,9 +36,15 @@ const chatSlice = createSlice({
 
     SetMessageReceived(state,action){
       state.messageReceived=action.payload.message;
+    },
+
+    RemoveChatRoom(state,action){
+      let currentState2 = { ...state };
+      delete currentState2.chatRooms[action.payload.socketId];
+      state.chatRooms=currentState2.chatRooms;
     }
   },
 });
 
-export const { SetChatRooms,SetSocket ,SetMessageReceived} = chatSlice.actions;
+export const { SetChatRooms,SetSocket ,SetMessageReceived,RemoveChatRoom} = chatSlice.actions;
 export default chatSlice.reducer;
