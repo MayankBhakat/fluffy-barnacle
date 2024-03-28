@@ -5,7 +5,7 @@ import './Sell_rentproperty.css'
 function Sell_rentproperty () {
     return (
         <div>
-            <Header ></Header>
+            <Header></Header>
             <Sell_RentHomeCenter></Sell_RentHomeCenter>
             <Footer ></Footer>
         </div>

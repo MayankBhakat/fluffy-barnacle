@@ -7,7 +7,7 @@ function AgentsPage () {
 
     return (
         <div >
-            <Header ></Header>
+           <Header></Header>
             <AgentCenter ></AgentCenter>
             <Footer ></Footer>
         </div>

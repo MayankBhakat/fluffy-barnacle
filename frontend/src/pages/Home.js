@@ -7,7 +7,7 @@ function HomePage () {
 
     return (
         <div className="Home">
-            <Header ></Header>
+           <Header></Header>
             <Center ></Center>
             <Footer ></Footer>
         </div>

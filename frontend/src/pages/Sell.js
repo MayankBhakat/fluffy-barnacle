@@ -9,7 +9,7 @@ function SellPage () {
 
     return (
         <div className="Rent">
-            <Header ></Header>
+           <Header></Header>
             <SellCenter></SellCenter>
             <Search pokemon={"sell"}></Search>
             <Footer ></Footer>

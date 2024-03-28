@@ -9,7 +9,7 @@ function RentPage () {
 
     return (
         <div className="Rent">
-            <Header ></Header>
+           <Header></Header>
             <RentCenter></RentCenter>
             <Search pokemon="rent"></Search>
             <Footer ></Footer>

@@ -11,7 +11,7 @@ function AdminChatsPage () {
 
     return (
         <div >
-            <Header ></Header>
+            <Header></Header>
             <div style={{height:"900px",backgroundColor:"white"}}>
             <Row className="m-0" style={{paddingTop:"100px"}}>
    

@@ -8,7 +8,7 @@ function SingleRentHomePage () {
 
     return (
         <div>
-            <Header ></Header>
+            <Header></Header>
            <SingleRentHomeComponent></SingleRentHomeComponent>
             <Footer ></Footer>
         </div>

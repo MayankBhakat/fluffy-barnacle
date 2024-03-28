@@ -8,7 +8,7 @@ function Renthome () {
 
     return (
         <div className="Renthome">
-            <Header ></Header>
+            <Header></Header>
             <RentHomeCenter></RentHomeCenter>
             <Footer ></Footer>
         </div>

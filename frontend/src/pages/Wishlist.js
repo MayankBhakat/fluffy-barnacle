@@ -8,7 +8,7 @@ function WishList () {
 
     return (
         <div className="Renthome">
-            <Header ></Header>
+          <Header></Header>
             <WishListCenter></WishListCenter>
             <Footer ></Footer>
         </div>
