@@ -11,8 +11,11 @@ import { HideLoading, ShowLoading } from "../redux/alertsSlice";
 import axios from 'axios';
 import { BiXCircle,BiChat } from 'react-icons/bi';
 import { getDefaultMiddleware } from '@reduxjs/toolkit';
-
 import socketIOClient from "socket.io-client";
+import Filter1OutlinedIcon from '@mui/icons-material/Filter1Outlined';
+import Filter2OutlinedIcon from '@mui/icons-material/Filter2Outlined';
+import Filter3OutlinedIcon from '@mui/icons-material/Filter3Outlined';
+import Filter4OutlinedIcon from '@mui/icons-material/Filter4Outlined';
 
 
 
@@ -23,14 +26,6 @@ const SingleRentHomeComponent =()=>{
     const [sam,setSam] = useState(0);
     const dispatch = useDispatch();
     const [socket,setSocket] =useState(false);
-
-
-    // let chat = [
-    //     {"client":"msg"},
-    //     {"client":"msg"},
-    //     {"admin":"msg"}
-    // ]
-
     const [chat,setChat] = useState([]);
     const [messageReceived, setMessageReceived] = useState(false);
     const [chatConnectionInfo, setChatConnectionInfo] = useState(false);
@@ -126,8 +121,7 @@ const SingleRentHomeComponent =()=>{
             console.log(err);
             dispatch(HideLoading());
 
-        }
-        
+        }      
     }
     useEffect(()=>{
 
@@ -157,10 +151,82 @@ const SingleRentHomeComponent =()=>{
         }
     }, [user]);
 
-    
+    const payment = {
+        amount: 500,
+        currency: "USD",
+        receipt: "qwsaq1"
+    };
 
+    const handlePayment = async (e) => {
+        dispatch(ShowLoading());
+        try {
+            const success = await axios.post("/api/payments/order", payment);
+
+            dispatch(HideLoading());
+            
+            console.log("Payment successful", success.data.id);
+            var options = {
+                key: "rzp_test_dDpLhvsEsnbTvv", // Enter the Key ID generated from the Dashboard
+                amount:payment.amount,
+                currency: payment.currency,
+                name: "Acme Corp", //your business name
+                description: "Test Transaction",
+                image: "https://example.com/your_logo",
+                order_id: success.data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                handler: async function (response) {
+                    const body = {
+                      ...response,
+                    };
+                    try{
+                    const validateRes = await axios.post("/api/payments/validate",body);
+                    console.log(validateRes);
+                    }
+                    catch(err){
+                        console.log(err);
+                    }
+
+                   
+                  },
+                prefill: { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
+                    "name": "Gnjknuihjnkni", //your customer's name
+                    "email": "gaurav.kumar@example.com", 
+                    "contact": "9000000000"  //Provide the customer's phone number for better conversion rates 
+                },
+                notes: {
+                    "address": "Razorpay Corporate Office"
+                },
+                theme: {
+                    "color": "#3399cc"
+                },
+                
+                
+            };
+            
+            var rzp1 = new window.Razorpay(options);
+            rzp1.on('payment.failed', function (response){
+                alert(response.error.code);
+                alert(response.error.description);
+                alert(response.error.source);
+                alert(response.error.step);
+                alert(response.error.reason);
+                alert(response.error.metadata.order_id);
+                alert(response.error.metadata.payment_id);
+
+            });
+
+
+            rzp1.open();
+            e.preventDefault();
+
+        } catch (error) {
+            console.log(error);
+            dispatch(HideLoading());
+
+        }
+    };
+    
     return (
-        <div style={{width:"100%",height:"1600px",backgroundColor:"white"}}>
+        <div style={{ width: '100%', height: '1900px', backgroundColor: 'white' }}>
           
             <div style={{display:"flex",flexDirection:"row"}}>
                 <div style={{flex:2}}>
@@ -302,7 +368,7 @@ const SingleRentHomeComponent =()=>{
                         }} 
                         class="fw-bold">${current_home.fees}</div>
                         
-                        <div style={{height:"40px",width:"80%",backgroundColor:"#7065F0",marginLeft:"30px",marginTop:"20px",borderRadius:"5px",color:"white",fontSize:"19px",textAlign:"center", paddingTop:"5px",cursor:"pointer"}}>
+                        <div style={{height:"40px",width:"80%",backgroundColor:"#7065F0",marginLeft:"30px",marginTop:"20px",borderRadius:"5px",color:"white",fontSize:"19px",textAlign:"center", paddingTop:"5px",cursor:"pointer"}} onClick={(handlePayment)}>
                             <HomeOutlinedIcon style={{margin:"5px",left:"300px"}}></HomeOutlinedIcon>
                             Apply Now</div>
                             {(isPresent)?
@@ -377,7 +443,76 @@ const SingleRentHomeComponent =()=>{
                         
                     </div>
 
+                    <div style={{width:"85%",
+                            height:"200px",
+                            backgroundColor:"white",
+                            margin:"90px",
+                            borderRadius:"10px",
+                            border:"2px solid #EFF0F2",
+                            display:"flex"
+                    }}>
+                            <div style={{marginTop:"30px",
+                                            flex:1,
+                                            height:"80px",
+                                            margin:"50px",
+                                            width:"200px",
+                                            backgroundColor:"#7065F0",
+                                            color:"white",
+                                            textAlign:"center",
+                                            borderRadius:"10px",
+                                            fontSize:"19px",
+                                            paddingTop:"15px",
+                                            }}>
+                                            <Filter1OutlinedIcon style={{marginRight:"5px"}}></Filter1OutlinedIcon>
+                                            Installment
+                            </div>
+                            <div style={{marginTop:"30px",
+                                            flex:1,
+                                            height:"80px",
+                                            margin:"50px",
+                                            width:"200px",
+                                            backgroundColor:"#7065F0",
+                                            color:"white",
+                                            textAlign:"center",
+                                            borderRadius:"10px",
+                                            fontSize:"19px",
+                                            paddingTop:"15px",
+                                            }}>
+                                            <Filter2OutlinedIcon style={{marginRight:"5px"}}></Filter2OutlinedIcon>
+                                            Installment
+                            </div>
+                            <div style={{marginTop:"30px",
+                                            flex:1,
+                                            height:"80px",
+                                            margin:"50px",
+                                            width:"200px",
+                                            backgroundColor:"#7065F0",
+                                            color:"white",
+                                            textAlign:"center",
+                                            borderRadius:"10px",
+                                            fontSize:"19px",
+                                            paddingTop:"15px",
+                                            }}>
+                                            <Filter3OutlinedIcon style={{marginRight:"5px"}}></Filter3OutlinedIcon>
+                                            Installment
+                            </div>
+                            <div style={{marginTop:"30px",
+                                            flex:1,
+                                            height:"80px",
+                                            margin:"50px",
 
+                                            width:"200px",
+                                            backgroundColor:"#7065F0",
+                                            color:"white",
+                                            textAlign:"center",
+                                            borderRadius:"10px",
+                                            fontSize:"19px",
+                                            paddingTop:"15px",
+                                            }}>
+                                            <Filter4OutlinedIcon style={{marginRight:"5px"}}></Filter4OutlinedIcon>
+                                    Installment
+                            </div>
+                    </div>
                     {user?.role !="admin" && (
                     <div className='qwwq'>
                     <input type='checkbox' id='check'/>
