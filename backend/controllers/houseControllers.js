@@ -299,11 +299,32 @@ const add_home = async(req,res,next) =>{
     }
 }
 
+const order_list = async (req, res, next) => {
+    try {
+        const user_id = req.query.user_id;
+        console.log(user_id);
+        const bookedHouses = await SingleHome.find({ 'status.booked_by': user_id });
+
+        res.status(200).send({
+            success:true,
+            data:bookedHouses,
+            message:"BOOKED HOUSES RETRIEVED SUCCESSFULLY"
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({ 
+            success:false,
+            message:"ERROR IN ORDERLIST"
+         });
+    }
+};
+
 module.exports = {
     get_all_homes,
     get_single_home,
     remove_house_from_wishlist,
     add_house_to_wishlist,
     get_all_houses_in_wishlist,
-    add_home
+    add_home,
+    order_list
 };

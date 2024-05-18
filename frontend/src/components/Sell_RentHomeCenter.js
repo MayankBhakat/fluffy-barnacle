@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form';
 import './Sell_RentHomeCenter.css';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
-import {useState,useEffect} from 'react';
+import {useState} from 'react';
 import axios from 'axios'
 import { HideLoading, ShowLoading } from "../redux/alertsSlice";
 import { useDispatch } from "react-redux";

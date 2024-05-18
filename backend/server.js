@@ -15,6 +15,9 @@ const app = express();
 const httpServer = createServer(app);
 global.io = new Server(httpServer);
 
+// Start the cron job
+require('./config/node_cron');
+
 // Middleware to parse JSON payloads
 app.use(express.json());
 

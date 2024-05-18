@@ -1,6 +1,8 @@
 const User = require('../models/UserModel.js');
+const Installment = require('../models/InstallmentModel.js')
 const { comparePasswords, hashPassword } = require('../utils/hashPassword');
 const generateAuthToken = require('../utils/generateAuthToken');
+const SingleHome = require('../models/SingleHomeModel');
 
 const registerUser = async (req, res, next) => {
   try {
@@ -123,4 +125,108 @@ const get_user_by_id = async (req, res, next) => {
   }
 }
 
-module.exports = { registerUser, loginUser, get_user_by_id };
+
+const cancel_payment = async (req, res, next) =>{
+  const {email , house_id} = req.body;
+  try{
+    const user = await User.findOne({ email });
+    if(!user){
+      return res.status(400).send({
+        success: false,
+        message: "USER NOT FOUND",
+      });
+    }
+    else{
+        user.orderlist = user.orderlist.filter(order => order.house_id !== house_id);
+        await user.save();
+          try{
+            const house = await SingleHome.findOne({_id:house_id});
+            house.status.available = true;
+            house.status.booked_by = null;
+            house.status.sell_order = null;
+            await house.save();
+          }catch(err){
+            return res.status(400).send({
+              success:false,
+              message:"ERROR IN CHANGING THE STATUS OF HOUSE",
+            })
+          }
+        return res.status(200).send({
+          success: true,
+          message: "ORDER CANCELLED SUCCESSFULLY",
+        });
+
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
+const cancel_payment2 = async (req, res, next) =>{
+  const {email , house_id} = req.body;
+  try{
+    const user = await User.findOne({ email });
+    if(!user){
+      return res.status(400).send({
+        success: false,
+        message: "USER NOT FOUND",
+      });
+    }
+    else{
+        user.rent_order=false;
+        user.rent_home_id = null;
+        await user.save();
+          try{
+            const house = await SingleHome.findOne({_id:house_id});
+            house.status.available = true;
+            house.status.booked_by = null;
+            house.status.rent_order.months_due = [];
+            house.status.rent_order.curr_month = false;
+            await house.save();
+          }catch(err){
+            return res.status(400).send({
+              success:false,
+              message:"ERROR IN CHANGING THE STATUS OF HOUSE",
+            })
+          }
+        return res.status(200).send({
+          success: true,
+          message: "ORDER CANCELLED SUCCESSFULLY",
+        });
+
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+}
+
+const get_all_transaction = async (req, res, next) => {
+  const userId = req.query.user_id;
+  try {
+    // Find all transactions where user_id matches the provided userId
+    const transactions = await Installment.find({ user_id: userId });
+
+    // Check if transactions are found
+    if (!transactions || transactions.length === 0) {
+      return res.status(404).send({
+        success: false,
+        message: "No transactions found for this user",
+      });
+    }
+
+    // Send the transactions in the response
+    return res.status(200).send({
+      success: true,
+      msg: "transaction send successfully",
+      data: transactions,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+
+module.exports = { registerUser, loginUser, get_user_by_id ,cancel_payment,get_all_transaction,cancel_payment2};

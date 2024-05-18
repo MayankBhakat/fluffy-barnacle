@@ -10,13 +10,13 @@ import { useSelector ,useDispatch} from "react-redux";
 import { HideLoading, ShowLoading } from "../redux/alertsSlice";
 import axios from 'axios';
 import { BiXCircle,BiChat } from 'react-icons/bi';
-import { getDefaultMiddleware } from '@reduxjs/toolkit';
 import socketIOClient from "socket.io-client";
 import Filter1OutlinedIcon from '@mui/icons-material/Filter1Outlined';
 import Filter2OutlinedIcon from '@mui/icons-material/Filter2Outlined';
 import Filter3OutlinedIcon from '@mui/icons-material/Filter3Outlined';
 import Filter4OutlinedIcon from '@mui/icons-material/Filter4Outlined';
-
+import toast from "react-hot-toast";
+import Modal_2 from "./Modal_2.js";
 
 
 const SingleRentHomeComponent =()=>{
@@ -30,6 +30,9 @@ const SingleRentHomeComponent =()=>{
     const [messageReceived, setMessageReceived] = useState(false);
     const [chatConnectionInfo, setChatConnectionInfo] = useState(false);
     const [reconnect, setReconnect] = useState(false);
+    const [install,setInstall] = useState(-1);
+    const [install2,setInstall2] = useState(-1);
+    const [month,setMonth] = useState(null);
 
     const clientSubmitChatMsg = (e) =>{
         if(e.keyCode && e.keyCode !== 13){
@@ -151,23 +154,37 @@ const SingleRentHomeComponent =()=>{
         }
     }, [user]);
 
-    const payment = {
-        amount: 500,
-        currency: "USD",
-        receipt: "qwsaq1"
-    };
 
-    const handlePayment = async (e) => {
+
+    const handlePayment = async (e,installment_number,feeo) => {
         dispatch(ShowLoading());
+        let ser = 100;
+        if(feeo==-1){
+            // console.log("3rf4f4g4g4t");
+            // ser = (parseInt(current_home.fees, 10)/4)*100;
+            ser = 200;
+        }
+        const payment = {
+            amount: ser,
+            currency: "USD",
+            receipt: "qwsaq1"
+        };
+
+        if(installment_number!=(install2+1)){
+            dispatch(HideLoading());
+            toast.error("PLEASE COMPLETE PREVIOUS INSTALLMENTS");
+            
+            return;
+        }
         try {
             const success = await axios.post("/api/payments/order", payment);
-
+           
             dispatch(HideLoading());
             
             console.log("Payment successful", success.data.id);
             var options = {
-                key: "rzp_test_dDpLhvsEsnbTvv", // Enter the Key ID generated from the Dashboard
-                amount:payment.amount,
+                key: "rzp_test_ViGqZKgSbS4BQG", // Enter the Key ID generated from the Dashboard
+                amount: payment.amount,
                 currency: payment.currency,
                 name: "Acme Corp", //your business name
                 description: "Test Transaction",
@@ -176,10 +193,20 @@ const SingleRentHomeComponent =()=>{
                 handler: async function (response) {
                     const body = {
                       ...response,
+                      house_id:current_home._id,
+                      user_id:user._id,
+                      email:user.email,
+                      price:payment.amount,
+                      installment_number:installment_number,
+                      sell_rent:"sell",
                     };
                     try{
+                        console.log("I ama a girl");
                     const validateRes = await axios.post("/api/payments/validate",body);
                     console.log(validateRes);
+
+                    setInstall2(installment_number);
+                    toast.success("PAYMENT SUCCESSFUL");
                     }
                     catch(err){
                         console.log(err);
@@ -204,29 +231,160 @@ const SingleRentHomeComponent =()=>{
             
             var rzp1 = new window.Razorpay(options);
             rzp1.on('payment.failed', function (response){
-                alert(response.error.code);
-                alert(response.error.description);
-                alert(response.error.source);
-                alert(response.error.step);
-                alert(response.error.reason);
-                alert(response.error.metadata.order_id);
-                alert(response.error.metadata.payment_id);
-
+                toast.error("PAYMENT FAILED");
             });
-
-
             rzp1.open();
             e.preventDefault();
 
         } catch (error) {
+            toast.error("PAYMENT FAILED");
             console.log(error);
             dispatch(HideLoading());
 
         }
     };
+
+
+    const handlePayment2 = async (e,installment_number,feeo) => {
+        dispatch(ShowLoading());
+        let ser = 100;
+        if(feeo==-1){
+            // console.log("3rf4f4g4g4t");
+            // ser = (parseInt(current_home.fees, 10)/4)*100;
+            ser = 200;
+        }
+        const payment = {
+            amount: ser,
+            currency: "USD",
+            receipt: "qwsaq1"
+        };
+
+        try {
+            const success = await axios.post("/api/payments/order", payment);
+           
+            dispatch(HideLoading());
+            
+            console.log("Payment successful", success.data.id);
+            var options = {
+                key: "rzp_test_ViGqZKgSbS4BQG", // Enter the Key ID generated from the Dashboard
+                amount: payment.amount,
+                currency: payment.currency,
+                name: "Acme Corp", //your business name
+                description: "Test Transaction",
+                image: "https://example.com/your_logo",
+                order_id: success.data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                handler: async function (response) {
+                    const body = {
+                      ...response,
+                      house_id:current_home._id,
+                      user_id:user._id,
+                      email:user.email,
+                      price:payment.amount,
+                      sell_rent:"rent",
+                      installment_number:installment_number,
+                    };
+                    try{
+                        console.log("I am a boy",body);
+                    const validateRes = await axios.post("/api/payments/validate2",body);
+                    console.log(validateRes);
+                    setInstall(installment_number);
+                    toast.success("PAYMENT SUCCESSFUL");
+                    }
+                    catch(err){
+                        console.log(err);
+                    }
+
+                   
+                  },
+                prefill: { //We recommend using the prefill parameter to auto-fill customer's contact information, especially their phone number
+                    "name": "Gnjknuihjnkni", //your customer's name
+                    "email": "gaurav.kumar@example.com", 
+                    "contact": "9000000000"  //Provide the customer's phone number for better conversion rates 
+                },
+                notes: {
+                    "address": "Razorpay Corporate Office"
+                },
+                theme: {
+                    "color": "#3399cc"
+                },
+                
+                
+            };
+            
+            var rzp1 = new window.Razorpay(options);
+            rzp1.on('payment.failed', function (response){
+                toast.error("PAYMENT FAILED");
+            });
+            rzp1.open();
+            e.preventDefault();
+
+        } catch (error) {
+            toast.error("PAYMENT FAILED");
+            console.log(error);
+            dispatch(HideLoading());
+
+        }
+    };
+
+useEffect(()=>{
+    
+    const order = user?.orderlist?.find(order => order?.house_id == current_home?._id);
+    let pokemon = -1;
+    if(order && order.installment_0?.status==true){
+        pokemon = 0;
+    }
+    if(order && order.installment_1?.status==true){
+        pokemon = 1;
+    }
+    if(order && order.installment_2?.status==true){
+        pokemon = 2;
+    }
+    if(order && order.installment_3?.status==true){
+        pokemon = 3;
+    }
+    if(order && order.installment_4?.status==true){
+        pokemon = 4;
+    }
+
+    setInstall2(pokemon);
+    
+},[current_home]) 
+
+useEffect(()=>{
+    let pokemon = -1;
+    if(user?.rent_home_id ==null){
+        pokemon=-1;
+    }
+    else if(user?.rent_home_id!=null && user?.rent_order==false && user?.rent_home_id==current_home._id){
+        pokemon=0;
+    }
+    else if(user?.rent_home_id!=null && user?.rent_order==true && user?.rent_home_id==current_home._id){
+        pokemon=1;
+    }
+    setInstall(pokemon);
+},[current_home]) 
+
+const [showPopup, setShowPopup] = useState(false);
+
+const handleShowPopup = () => {
+  setShowPopup(true);
+};
+
+console.log(user);
+
+useEffect(() => {
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const currentMonthIndex = new Date().getMonth();
+    setMonth(monthNames[currentMonthIndex]);
+  }, []);
+
+
     
     return (
-        <div style={{ width: '100%', height: '1900px', backgroundColor: 'white' }}>
+        <div style={{ width: '100%', height: '2100px', backgroundColor: 'white' }}>
           
             <div style={{display:"flex",flexDirection:"row"}}>
                 <div style={{flex:2}}>
@@ -360,17 +518,50 @@ const SingleRentHomeComponent =()=>{
                         marginTop:"13px",
                         fontSize: '15px',
                         color:"black"}} 
-                        class="fw-bold">Rent Price/month</div>
+                        className="fw-bold">Rent Price/month</div>
                          <div style={{width:"100%",
                         color:"#7065F0",
                         marginLeft:"30px",
                         fontSize: '30px',
                         }} 
-                        class="fw-bold">${current_home.fees}</div>
-                        
-                        <div style={{height:"40px",width:"80%",backgroundColor:"#7065F0",marginLeft:"30px",marginTop:"20px",borderRadius:"5px",color:"white",fontSize:"19px",textAlign:"center", paddingTop:"5px",cursor:"pointer"}} onClick={(handlePayment)}>
+                        className="fw-bold">${current_home.fees}</div>
+
+
+
+                        {current_home.sell_rent=="sell" && install2<0 &&
+                        (
+                        <div style={{ height: "40px", width: "80%", backgroundColor: "#7065F0", marginLeft: "30px", marginTop: "20px", borderRadius: "5px", color: "white", fontSize: "19px", textAlign: "center", paddingTop: "5px", cursor: "pointer" }} onClick={(e) => handlePayment(e, 0, 1)}>
+                            <HomeOutlinedIcon style={{ margin: "5px", left: "300px" }}></HomeOutlinedIcon>
+                            Apply for sell 
+                        </div>
+                        )}
+
+                        {current_home.sell_rent=="rent" && install<0 && 
+                        (
+                        <div style={{ height: "40px", width: "80%", backgroundColor: "#7065F0", marginLeft: "30px", marginTop: "20px", borderRadius: "5px", color: "white", fontSize: "19px", textAlign: "center", paddingTop: "5px", cursor: "pointer" }} onClick={(e) => handlePayment2(e, 0, 1)}>
+                            <HomeOutlinedIcon style={{ margin: "5px", left: "300px" }}></HomeOutlinedIcon>
+                            Apply for rent 
+                        </div>
+                        )}
+
+                        {current_home.sell_rent=="sell" && install2>=0 &&(
+                        <div style={{height:"40px",width:"80%",backgroundColor:"#3a037c",marginLeft:"30px",marginTop:"20px",borderRadius:"5px",color:"white",fontSize:"19px",textAlign:"center", paddingTop:"5px"}} >
                             <HomeOutlinedIcon style={{margin:"5px",left:"300px"}}></HomeOutlinedIcon>
-                            Apply Now</div>
+                            Already applied
+                        </div>
+                        )}
+
+                        {current_home.sell_rent=="rent" && install>=0 &&(
+                        <div style={{height:"40px",width:"80%",backgroundColor:"#3a037c",marginLeft:"30px",marginTop:"20px",borderRadius:"5px",color:"white",fontSize:"19px",textAlign:"center", paddingTop:"5px"}} >
+                            <HomeOutlinedIcon style={{margin:"5px",left:"300px"}}></HomeOutlinedIcon>
+                            Already applied
+                        </div>
+                        )}  
+
+                        
+
+
+
                             {(isPresent)?
                             <div style={{height:"40px",width:"80%",backgroundColor:"#7065F0",marginLeft:"30px",marginTop:"20px",borderRadius:"5px",color:"white",fontSize:"19px",textAlign:"center", paddingTop:"5px",cursor:"pointer"}}  onClick={(Remove_from_wishlist)}>
                             
@@ -383,6 +574,103 @@ const SingleRentHomeComponent =()=>{
                             Add To WishList</div>}
                     </div>
                 </div>
+                {install>=0 && current_home.sell_rent=="rent" &&
+                <div style={{display:"flex"}}>
+
+                    {install<=0 && current_home.sell_rent=="rent" &&
+                    (<div className="hoverEffect2" onClick={(e) => handlePayment2(e, 1, 1)}>
+                    Payment for {month}</div>)}
+                    {install>0 && current_home.sell_rent=="rent" &&
+                    (<div className="nohoverEffect2" onClick={(e) => handlePayment2(e, 1, 1)}>
+                    Payment Done</div>)}
+                    <div className="hoverEffect2" onClick={handleShowPopup}>
+                    Cancel Rent</div>
+                <div>
+                    {showPopup && <Modal_2 setShowPopup={setShowPopup}  install={install} email={user.email} house={current_home._id} rent_or_sell={"rent"}/>}
+                </div>
+                </div>
+                }
+
+                {current_home.sell_rent=="sell" &&
+                install2>=0 && (
+                    <div>
+                <div style={{width:"85%",
+                            height:"200px",
+                            backgroundColor:"white",
+                            margin:"90px",
+                            borderRadius:"10px",
+                            border:"2px solid #EFF0F2",
+                            display:"flex"
+                    }}>
+                            {install2 >= 1 ? (
+                                <div className="nohoverEffect" style={{ color: 'gray' }}>
+                                    Installment completed
+                                </div>
+                            ) : (
+                                <div className="hoverEffect" onClick={(e) => handlePayment(e, 1,-1)}>
+                                    <Filter1OutlinedIcon style={{ marginRight: "5px" }} />
+                                    Installment
+                                </div>
+                            )} 
+                            {install2 >= 2 ? (
+                                <div className="nohoverEffect" style={{ color: 'gray' }}>
+                                    Installment completed
+                                </div>
+                            ) : (
+                                <div className="hoverEffect" onClick={(e) => handlePayment(e, 2,-1)}>
+                                    <Filter2OutlinedIcon style={{ marginRight: "5px" }} />
+                                    Installment
+                                </div>
+                            )} 
+                            {install2 >= 3 ? (
+                                <div className="nohoverEffect" style={{ color: 'gray' }}>
+                                    Installment completed
+                                </div>
+                            ) : (
+                                <div className="hoverEffect" onClick={(e) => handlePayment(e, 3,-1)}>
+                                    <Filter3OutlinedIcon style={{ marginRight: "5px" }} />
+                                    Installment
+                                </div>
+                            )} 
+                            {install2 >= 4 ? (
+                                <div className="nohoverEffect" style={{ color: 'gray' }}>
+                                    Installment completed
+                                </div>
+                            ) : (
+                                <div className="hoverEffect" onClick={(e) => handlePayment(e, 4,-1)}>
+                                    <Filter4OutlinedIcon style={{ marginRight: "5px" }} />
+                                    Installment
+                                </div>
+                            )} 
+                    </div>
+                                    <div
+                                    className="piouy"
+                                    style={{
+                                        width: "20%",
+                                        height: "50px",
+                                        backgroundColor: "white",
+                                        margin: "90px",
+                                        marginTop: "-50px",
+                                        borderRadius: "10px",
+                                        border: "2px solid #EFF0F2",
+                                        backgroundColor: "#7065F0",
+                                        color: "white",
+                                        textAlign: "center",
+                                        fontSize: "22px",
+                                        paddingTop: "5px",
+                                        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                                        cursor: "pointer",
+                                    }}
+                                    onClick={handleShowPopup}
+                                >
+                                    Cancel Order
+                                </div>
+                                {showPopup && <Modal_2 setShowPopup={setShowPopup}  install={install2} email={user.email} house={current_home._id} rent_or_sell={"sell"}/>}
+                </div>
+                
+                )
+                    }
+
                 <div style={{width:"70%",
                             height:"200px",
                             backgroundColor:"white",
@@ -443,76 +731,7 @@ const SingleRentHomeComponent =()=>{
                         
                     </div>
 
-                    <div style={{width:"85%",
-                            height:"200px",
-                            backgroundColor:"white",
-                            margin:"90px",
-                            borderRadius:"10px",
-                            border:"2px solid #EFF0F2",
-                            display:"flex"
-                    }}>
-                            <div style={{marginTop:"30px",
-                                            flex:1,
-                                            height:"80px",
-                                            margin:"50px",
-                                            width:"200px",
-                                            backgroundColor:"#7065F0",
-                                            color:"white",
-                                            textAlign:"center",
-                                            borderRadius:"10px",
-                                            fontSize:"19px",
-                                            paddingTop:"15px",
-                                            }}>
-                                            <Filter1OutlinedIcon style={{marginRight:"5px"}}></Filter1OutlinedIcon>
-                                            Installment
-                            </div>
-                            <div style={{marginTop:"30px",
-                                            flex:1,
-                                            height:"80px",
-                                            margin:"50px",
-                                            width:"200px",
-                                            backgroundColor:"#7065F0",
-                                            color:"white",
-                                            textAlign:"center",
-                                            borderRadius:"10px",
-                                            fontSize:"19px",
-                                            paddingTop:"15px",
-                                            }}>
-                                            <Filter2OutlinedIcon style={{marginRight:"5px"}}></Filter2OutlinedIcon>
-                                            Installment
-                            </div>
-                            <div style={{marginTop:"30px",
-                                            flex:1,
-                                            height:"80px",
-                                            margin:"50px",
-                                            width:"200px",
-                                            backgroundColor:"#7065F0",
-                                            color:"white",
-                                            textAlign:"center",
-                                            borderRadius:"10px",
-                                            fontSize:"19px",
-                                            paddingTop:"15px",
-                                            }}>
-                                            <Filter3OutlinedIcon style={{marginRight:"5px"}}></Filter3OutlinedIcon>
-                                            Installment
-                            </div>
-                            <div style={{marginTop:"30px",
-                                            flex:1,
-                                            height:"80px",
-                                            margin:"50px",
 
-                                            width:"200px",
-                                            backgroundColor:"#7065F0",
-                                            color:"white",
-                                            textAlign:"center",
-                                            borderRadius:"10px",
-                                            fontSize:"19px",
-                                            paddingTop:"15px",
-                                            }}>
-                                            <Filter4OutlinedIcon style={{marginRight:"5px"}}></Filter4OutlinedIcon>
-                                    Installment
-                            </div>
-                    </div>
                     {user?.role !="admin" && (
                     <div className='qwwq'>
                     <input type='checkbox' id='check'/>
@@ -545,7 +764,7 @@ const SingleRentHomeComponent =()=>{
             ))}
           </div>
           <textarea
-            onKetUp={(e) => clientSubmitChatMsg(e)}
+            onKeyUp={(e) => clientSubmitChatMsg(e)}
             id="clientChatMsg"
             className="form-control"
             placeholder="Your Text Message"

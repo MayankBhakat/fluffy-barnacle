@@ -6,7 +6,7 @@ import { useLocation ,useNavigate } from 'react-router-dom';
 import "./RentHomeCenter.css";
 import axios from "axios";
 import { HideLoading, ShowLoading } from "../redux/alertsSlice";
-import { useSelector ,useDispatch} from "react-redux";
+import { useDispatch} from "react-redux";
 
 
 

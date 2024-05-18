@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { get_all_homes, get_single_home, remove_house_from_wishlist, add_house_to_wishlist, get_all_houses_in_wishlist ,add_home} = require('../controllers/houseControllers');
+const { get_all_homes, get_single_home, remove_house_from_wishlist, add_house_to_wishlist, get_all_houses_in_wishlist ,add_home,order_list} = require('../controllers/houseControllers');
 const {upload} = require('../utils/uploadfile')
 const fs = require('fs')
 const SingleHome = require('../models/SingleHomeModel');
@@ -27,6 +27,10 @@ router.get('/get_all_houses_in_wishlist', (req, res, next) => {
 
 router.use('/add_home', upload.array('image'), async (req, res,next) => {
     add_home(req,res,next);
+});
+
+router.get('/orders', (req, res, next) => {
+   order_list(req, res, next);
 });
 
 module.exports = router;

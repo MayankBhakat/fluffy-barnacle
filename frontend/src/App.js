@@ -18,6 +18,8 @@ import ProtectedRoutes from "./authRoutes/protectedRoutes";
 import PublicRoutes from "./authRoutes/publicRoutes";
 import Sell_rentproperty from "./pages/Sell_rentproperty";
 import SellPage from "./pages/Sell";
+import TransactionHistoryPage from "./pages/TransactionHistoryPage";
+import Current_orderPage from "./pages/Current_orderPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
 import AdminChatsPage from "./pages/AdminChatsPage";
@@ -37,10 +39,12 @@ function App() {
      <Route path="/" element={<ProtectedRoutes><HomePage /></ProtectedRoutes>} />
      <Route path="/rent" element={<ProtectedRoutes><RentPage /></ProtectedRoutes>} />
      <Route path="/sell" element={<ProtectedRoutes><SellPage /></ProtectedRoutes>} />
+     <Route path="/my_transaction" element={<ProtectedRoutes><TransactionHistoryPage /></ProtectedRoutes>} />
      <Route path="/sell_renthome" element={<ProtectedRoutes><Renthome /></ProtectedRoutes>} />
      <Route path="/singlerenthome/:home_id" element={<ProtectedRoutes>< SingleRentHomePage/></ProtectedRoutes>} />
      <Route path="/agentspage" element={<ProtectedRoutes><AgentsPage/></ProtectedRoutes>}/>
      <Route path="/wishlist" element={<ProtectedRoutes><WishList/></ProtectedRoutes>}/>
+     <Route path="/orders" element={<ProtectedRoutes><Current_orderPage/></ProtectedRoutes>}/>
      <Route path="/admin/addproperty" element={<ProtectedRoutes><Sell_rentproperty/></ProtectedRoutes>}/>
      <Route path="/admin/chats" element={<ProtectedRoutes><AdminChatsPage/></ProtectedRoutes>}/>
      </Routes>
