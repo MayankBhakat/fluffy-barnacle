@@ -7,7 +7,7 @@ import { HideLoading, ShowLoading } from "../redux/alertsSlice";
 import { useDispatch} from "react-redux";
 import toast from "react-hot-toast";
 
-function Modal_2({ setShowPopup ,install,email,house,rent_or_sell}) {
+function Modal_2({ setShowPopup ,install,email,house,rent_or_sell,user_id}) {
   const dispatch = useDispatch();
   const handleClose = () => {
     setShowPopup(false);
@@ -19,6 +19,12 @@ function Modal_2({ setShowPopup ,install,email,house,rent_or_sell}) {
       email : email,
       house_id:house
     }
+    const body2 ={
+      user_id:user_id,
+      installments:install,
+      house_id:house,
+      rent_sell:rent_or_sell
+    }
     try{
    
       if(rent_or_sell=="sell"){
@@ -28,7 +34,14 @@ function Modal_2({ setShowPopup ,install,email,house,rent_or_sell}) {
         const response = await axios.post("/api/users/cancel_payment2",body);
       }
       toast.success("YOUR ORDER HAS BEEN SUCCESSFULLY CANCELLED.PLEASE REFRESH THE PAGE TO SEE CANCELLATION.");
-      dispatch(HideLoading());
+      try{
+        const response = await axios.post("/api/users/order_cancel",body2);
+        dispatch(HideLoading());
+      }catch(err){
+        console.log(err);
+        dispatch(HideLoading());
+      }
+      
     }catch(err){
       console.log(err);
       toast.success("CANCELLATION FAILED");

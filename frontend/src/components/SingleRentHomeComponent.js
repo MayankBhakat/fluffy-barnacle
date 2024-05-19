@@ -9,6 +9,7 @@ import {useState,useEffect} from 'react';
 import { useSelector ,useDispatch} from "react-redux";
 import { HideLoading, ShowLoading } from "../redux/alertsSlice";
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { BiXCircle,BiChat } from 'react-icons/bi';
 import socketIOClient from "socket.io-client";
 import Filter1OutlinedIcon from '@mui/icons-material/Filter1Outlined';
@@ -20,6 +21,7 @@ import Modal_2 from "./Modal_2.js";
 
 
 const SingleRentHomeComponent =()=>{
+    const navigate = useNavigate();
     const [current_home, setCurrent_home] = useState({});
     const [isPresent, setIsPresent] = useState(false);
     const { user } = useSelector(state => state.users);
@@ -176,12 +178,17 @@ const SingleRentHomeComponent =()=>{
             
             return;
         }
+        if(installment_number==0 && (user.orderlist.length!=0 || user.rent_home_id!=null)){
+            dispatch(HideLoading());
+            toast.error("YOU HAVE EITHER BOOKED OR RENTED A HOUSE AND HAVENT COMPLETED ALL ITS INSTALLMENTS YET");
+            
+            return;
+        }
         try {
             const success = await axios.post("/api/payments/order", payment);
-           
             dispatch(HideLoading());
+           
             
-            console.log("Payment successful", success.data.id);
             var options = {
                 key: "rzp_test_ViGqZKgSbS4BQG", // Enter the Key ID generated from the Dashboard
                 amount: payment.amount,
@@ -201,10 +208,19 @@ const SingleRentHomeComponent =()=>{
                       sell_rent:"sell",
                     };
                     try{
-                        console.log("I ama a girl");
+                        dispatch(ShowLoading());
                     const validateRes = await axios.post("/api/payments/validate",body);
-                    console.log(validateRes);
-
+                        if(installment_number==4){
+                            try{
+                               await axios.post("/api/users/ownership",{email:user.email,house_id:current_home._id});
+                               navigate('/');
+                               dispatch(HideLoading());
+                            }catch(err){
+                                console.log(err);
+                                dispatch(HideLoading());
+                            }
+                        }
+                        dispatch(HideLoading());
                     setInstall2(installment_number);
                     toast.success("PAYMENT SUCCESSFUL");
                     }
@@ -258,10 +274,17 @@ const SingleRentHomeComponent =()=>{
             currency: "USD",
             receipt: "qwsaq1"
         };
-
+        if(installment_number==0 && (user.orderlist.length!=0 || user.rent_home_id!=null)){
+            dispatch(HideLoading());
+            toast.error("YOU HAVE EITHER BOOKED OR RENTED A HOUSE AND HAVENT COMPLETED ALL ITS INSTALLMENTS YET");
+            
+            return;
+        }
         try {
+
             const success = await axios.post("/api/payments/order", payment);
            
+
             dispatch(HideLoading());
             
             console.log("Payment successful", success.data.id);
@@ -586,7 +609,7 @@ useEffect(() => {
                     <div className="hoverEffect2" onClick={handleShowPopup}>
                     Cancel Rent</div>
                 <div>
-                    {showPopup && <Modal_2 setShowPopup={setShowPopup}  install={install} email={user.email} house={current_home._id} rent_or_sell={"rent"}/>}
+                    {showPopup && <Modal_2 setShowPopup={setShowPopup}  install={install} email={user.email} house={current_home._id} rent_or_sell={"rent"} user_id={user._id}/>}
                 </div>
                 </div>
                 }
@@ -665,7 +688,7 @@ useEffect(() => {
                                 >
                                     Cancel Order
                                 </div>
-                                {showPopup && <Modal_2 setShowPopup={setShowPopup}  install={install2} email={user.email} house={current_home._id} rent_or_sell={"sell"}/>}
+                                {showPopup && <Modal_2 setShowPopup={setShowPopup}  install={install2} email={user.email} house={current_home._id} rent_or_sell={"sell"} user_id={user._id}/>}
                 </div>
                 
                 )

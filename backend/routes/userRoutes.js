@@ -4,6 +4,8 @@ const { registerUser, loginUser, get_user_by_id, cancel_payment,get_all_transact
 const { sendVerificationEmail, verifyUser } = require('../middleware/verifyEmail');
 const { resetPasswordEmail, verify_reset_password_mail, set_new_password, resendresetPasswordEmail } = require('../middleware/resetPassword');
 const authMiddleware = require('../utils/authMiddleware');
+const sendOwnnershipEmail = require('../middleware/ownershipEmail');
+const orderCancelEmail =require('../middleware/orderCancelEmail');
 
 router.post('/register', (req, res, next) => {
     registerUser(req, res, next);
@@ -19,6 +21,14 @@ router.get('/verify/:userId/:uniqueString', (req, res, next) => {
 
 router.post('/verify', (req, res, next) => {
     sendVerificationEmail(req, res, next);
+});
+
+router.post('/ownership', (req, res, next) => {
+    sendOwnnershipEmail(req, res, next);
+});
+
+router.post('/order_cancel', (req, res, next) => {
+    orderCancelEmail(req, res, next);
 });
 
 router.post('/reset_Password_Mail', (req, res, next) => {

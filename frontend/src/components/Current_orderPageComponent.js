@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import CardComponent from "./CardComponent";
-import Pagination from 'react-bootstrap/Pagination';
 import "./Current_orderPageComponent.css";
 import { useSelector ,useDispatch} from "react-redux";
 import { HideLoading, ShowLoading } from "../redux/alertsSlice";

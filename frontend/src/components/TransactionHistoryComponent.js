@@ -3,6 +3,7 @@ import Table from 'react-bootstrap/Table';
 import './TransactionHistoryComponent.css';
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { format } from 'date-fns'; // Import date-fns for formatting dates
 
 function TransactionHistoryComponent() {
   const [my_transaction, setMy_transaction] = useState([]);
@@ -30,11 +31,11 @@ function TransactionHistoryComponent() {
         <thead>
           <tr>
             <th>S.No</th>
-            <th>House NO</th>
             <th>HouseID_Number</th>
             <th>Order_ID</th>
             <th>Payment_ID</th>
             <th>Amt</th>
+            <th>Date</th> {/* Add a new column for the date */}
           </tr>
         </thead>
         <tbody>
@@ -42,16 +43,16 @@ function TransactionHistoryComponent() {
             my_transaction.map((transaction, index) => (
               <tr key={transaction._id}>
                 <td>{index + 1}</td>
-                <td>432</td>
                 <td>{transaction.house_id}</td>
                 <td>{transaction.order_id}</td>
                 <td>{transaction.payment_id}</td>
                 <td>{transaction.payment_amount}</td>
+                <td>{format(new Date(transaction.createdAt), 'dd-MM-yyyy')}</td> {/* Format and display the date */}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="5" style={{ textAlign: "center" }}>No transactions found</td>
+              <td colSpan="7" style={{ textAlign: "center" }}>No transactions found</td> {/* Update colSpan to match the number of columns */}
             </tr>
           )}
         </tbody>

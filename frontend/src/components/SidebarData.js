@@ -2,7 +2,11 @@ import React from 'react';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 import * as IoIcons from 'react-icons/io';
-
+import HouseIcon from '@mui/icons-material/House';
+import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
+import ListIcon from '@mui/icons-material/List';
+import RoofingIcon from '@mui/icons-material/Roofing';
+import PaidIcon from '@mui/icons-material/Paid';
 export const SidebarData = [
   {
     title: 'Home',
@@ -11,33 +15,33 @@ export const SidebarData = [
     cName: 'nav-text'
   },
   {
-    title: 'Reports',
-    path: '/reports',
-    icon: <IoIcons.IoIosPaper />,
+    title: 'Sell',
+    path: '/sell',
+    icon: <HouseIcon/>,
     cName: 'nav-text'
   },
   {
-    title: 'Products',
-    path: '/products',
-    icon: <FaIcons.FaCartPlus />,
+    title: 'Rent',
+    path: '/rent',
+    icon: <MapsHomeWorkIcon/>,
     cName: 'nav-text'
   },
   {
-    title: 'Team',
-    path: '/team',
-    icon: <IoIcons.IoMdPeople />,
+    title: 'Wishlist',
+    path: '/wishlist',
+    icon: <ListIcon />,
     cName: 'nav-text'
   },
   {
-    title: 'Messages',
-    path: '/messages',
-    icon: <FaIcons.FaEnvelopeOpenText />,
+    title: 'MyOrders',
+    path: '/orders',
+    icon: <RoofingIcon />,
     cName: 'nav-text'
   },
   {
-    title: 'Support',
-    path: '/support',
-    icon: <IoIcons.IoMdHelpCircle />,
+    title: 'Transactions',
+    path: '/my_transaction',
+    icon: <PaidIcon />,
     cName: 'nav-text'
   }
 ];

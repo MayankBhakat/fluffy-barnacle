@@ -6,13 +6,14 @@ import { useSelector ,useDispatch} from "react-redux";
 import {useState,useEffect} from 'react';
 import socketIOClient from "socket.io-client";
 import { SetChatRooms ,SetSocket, SetMessageReceived , RemoveChatRoom} from "../redux/chatSlice";
-
+import { useNavigate } from 'react-router-dom';
 import SidebarDropdown from './SidebarDropdown'; // Import the SidebarDropdown component
 
 
 
 
 const Header = () => {
+  const navigate = useNavigate()
   const {chatRooms} = useSelector((state) => state.chat);
   const { messageReceived } = useSelector((state) => state.chat);
   const dispatch = useDispatch();
@@ -64,17 +65,21 @@ useEffect(() => {
       <nav className="nav">
         <ul>
           <li><a href="/">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/services">Services</a></li>
-          <li><a href="/admin/chats">Admin</a>
+          <li><a href="/sell">Sell</a></li>
+          <li><a href="/rent">Rent</a></li>
+          {user?.role=="admin" && 
+          <li><a href="/admin/chats">Chats</a>
           {messageReceived && <span className="position-absolute top-1 start-10 translate-middle p-2 bg-danger border border-light rounded-circle"></span>}
           </li>
-
+          }
+          {user?.role=="admin" && 
+          <li><a href="/admin/addproperty">Add Property</a></li>
+          }
         </ul>
       </nav>
       <div className="auth-buttons">
-        <button className="login-button">Login</button>
-        <button className="register-button">Register</button>
+        <button className="login-button" onClick={()=>{localStorage.removeItem("access_token");
+        navigate("/login")}}>Logout</button>
       </div>
     </header>
   );
