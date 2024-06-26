@@ -163,7 +163,7 @@ html {
   
   .register-box a span:nth-child(4) {
     bottom: -100%;
-    left: 0;
+    left: -16px;
     width: 2px;
     height: 100%;
     background: linear-gradient(360deg, transparent, #03e9f4);

@@ -9,6 +9,7 @@ import { SetMessageReceived }  from "../redux/chatSlice";
 const AdminChatsPageComponent = ({chatRoom, roomIndex, socketUser, socket}) =>{
   const dispatch = useDispatch();
 
+  //This is creating Toast1,Toast2 and so on (dynamic variable)
    [window["toast" + roomIndex], window["closeToast" + roomIndex]] =
   useState(true);
  const [show,setShow] = useState(true);
@@ -35,6 +36,8 @@ const adminSubmitChatMsg = (e, elem) => {
   
     const updatedChatRoom = [...chatRoom]; // Create a shallow copy of chatRoom
 
+
+    //Admin sends meassge to socket in server
     socket.emit("admin sends message", {
       user: socketUser,
       message: v,
@@ -43,9 +46,14 @@ const adminSubmitChatMsg = (e, elem) => {
     console.log(updatedChatRoom);
     dispatch(SetChatRooms({user:chatRoom[0],message:msg.value,isAdmin:true})); // Dispatch the action to update the state
     console.log(chatRoom);
+
+    //Notification off
     dispatch(SetMessageReceived({message:false}));
 
+    //Message text disappers from text field when u hit enter
     msg.focus();
+
+    //To scroll down the scrollbar
     setTimeout(() => {
         msg.value = "";
         const chatMessages = document.querySelector(`.cht-msg${socketUser}`);

@@ -1,8 +1,20 @@
 const User = require('../models/UserModel.js');
+const express = require("express");
 const Installment = require('../models/InstallmentModel.js')
 const { comparePasswords, hashPassword } = require('../utils/hashPassword');
 const generateAuthToken = require('../utils/generateAuthToken');
 const SingleHome = require('../models/SingleHomeModel');
+const Razorpay = require("razorpay");
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_SECRET
+});
+
 
 const registerUser = async (req, res, next) => {
   try {
@@ -126,42 +138,78 @@ const get_user_by_id = async (req, res, next) => {
 }
 
 
-const cancel_payment = async (req, res, next) =>{
-  const {email , house_id} = req.body;
-  try{
-    const user = await User.findOne({ email });
-    if(!user){
-      return res.status(400).send({
-        success: false,
-        message: "USER NOT FOUND",
-      });
-    }
-    else{
-        user.orderlist = user.orderlist.filter(order => order.house_id !== house_id);
-        await user.save();
-          try{
-            const house = await SingleHome.findOne({_id:house_id});
-            house.status.available = true;
-            house.status.booked_by = null;
-            house.status.sell_order = null;
-            await house.save();
-          }catch(err){
-            return res.status(400).send({
-              success:false,
-              message:"ERROR IN CHANGING THE STATUS OF HOUSE",
-            })
-          }
-        return res.status(200).send({
-          success: true,
-          message: "ORDER CANCELLED SUCCESSFULLY",
-        });
+const cancel_payment = async (req, res, next) => {
+  const { email, house_id } = req.body;
+  try {
+      const user = await User.findOne({ email });
+      if (!user) {
+          return res.status(400).send({
+              success: false,
+              message: "USER NOT FOUND",
+          });
+      } else {
+          user.orderlist = user.orderlist.filter(order => order.house_id !== house_id);
+          await user.save();
+          try {
+              const house = await SingleHome.findOne({ _id: house_id });
+              house.status.available = true;
+              house.status.booked_by = null;
+              house.status.sell_order = null;
+              await house.save();
+              
+              // Refund logic
+              try {
+                  const installments = await Installment.find({
+                      user_id: user._id,
+                      house_id: house_id,
+                      installment_number: { $in: ["1", "2", "3", "4"] }
+                  });
+                  //ParseFloat converts string to float
+                  const totalAmount = installments.reduce((sum, installment) => sum + parseFloat(installment.payment_amount), 0);
+                  const refundAmount = totalAmount * 0.85;
 
-    }
+                  const refundPromises = installments.map(installment =>
+                      razorpayInstance.payments.refund(installment.payment_id, {
+                          amount: parseFloat(installment.payment_amount) * 0.98 , 
+                          notes: { reason: "Order cancellation refund" }
+                      })
+                  );
+
+                  await Promise.all(refundPromises);
+                  console.log("Refunds processed successfully");
+
+                  // Delete installments after refund
+                  await Installment.deleteMany({
+                      user_id: user._id,
+                      house_id: house_id,
+                      installment_number: { $in: ["1", "2", "3", "4"] }
+                  });
+                  console.log("Installments deleted successfully");
+                  
+              } catch (error) {
+                  console.log("Error processing refund or deleting installments:", error);
+                  return res.status(500).send({
+                      success: false,
+                      message: "ERROR IN PROCESSING REFUND OR DELETING INSTALLMENTS",
+                  });
+              }
+
+          } catch (err) {
+              return res.status(400).send({
+                  success: false,
+                  message: "ERROR IN CHANGING THE STATUS OF HOUSE",
+              });
+          }
+          return res.status(200).send({
+              success: true,
+              message: "ORDER CANCELLED SUCCESSFULLY. YOUR PAYMENT HAS BEEN REFUNDED.",
+          });
+      }
   } catch (error) {
-    console.log(error);
-    next(error);
+      console.log(error);
+      next(error);
   }
-}
+};
 
 const cancel_payment2 = async (req, res, next) =>{
   const {email , house_id} = req.body;

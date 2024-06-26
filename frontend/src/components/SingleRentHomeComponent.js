@@ -28,6 +28,8 @@ const SingleRentHomeComponent =()=>{
     const [sam,setSam] = useState(0);
     const dispatch = useDispatch();
     const [socket,setSocket] =useState(false);
+
+    //For setting the chat
     const [chat,setChat] = useState([]);
     const [messageReceived, setMessageReceived] = useState(false);
     const [chatConnectionInfo, setChatConnectionInfo] = useState(false);
@@ -41,13 +43,22 @@ const SingleRentHomeComponent =()=>{
             return;
         }
         setChatConnectionInfo("");
+
+        //Here notifiaction is off
         setMessageReceived(false);
+
+        //Getting the message from chat box built below with id clientChatMsg
         const msg = document.getElementById("clientChatMsg");
+        //To remove white spaces at extreme
         let v = msg.value.trim();
         if (v === "" || v === null || v === false || !v) {
           return;
         }
+        //Here the client send message
         socket.emit("client sends message",v);
+
+        //Here array of objects is used.Client and admin are key
+        //This is created to display the message separately
         setChat((chat)=>{
             return [...chat,{client: v}];
         })
@@ -65,17 +76,23 @@ const SingleRentHomeComponent =()=>{
         if(user?.role!="admin"){
             setReconnect(false);
             const socket = socketIOClient();
+
+            //When no admin is present
             socket.on("no admin", (msg) => {
                 setChat((chat) => {
                     return [...chat, { admin: "no admin here now" }];
                 })
             })
             
+
+            //Here socket sends client admin messages
             socket.on("server sends message from admin to client", (message) => {
                 
                 setChat((chat) => {
                     return [...chat, { admin: message}];
                 })
+
+                //Notifiaction for new message arrived
                 setMessageReceived(true);
                 const chatMessages = document.querySelector(".cht-msg");
                 chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -159,17 +176,16 @@ const SingleRentHomeComponent =()=>{
 
 
     const handlePayment = async (e,installment_number,feeo) => {
+        const uniqueReceipt = `receipt_${Date.now()}`; 
         dispatch(ShowLoading());
         let ser = 100;
         if(feeo==-1){
-            // console.log("3rf4f4g4g4t");
-            // ser = (parseInt(current_home.fees, 10)/4)*100;
             ser = 200;
         }
         const payment = {
             amount: ser,
             currency: "USD",
-            receipt: "qwsaq1"
+            receipt: uniqueReceipt
         };
 
         if(installment_number!=(install2+1)){
@@ -187,17 +203,16 @@ const SingleRentHomeComponent =()=>{
         try {
             const success = await axios.post("/api/payments/order", payment);
             dispatch(HideLoading());
-           
-            
             var options = {
-                key: "rzp_test_ViGqZKgSbS4BQG", // Enter the Key ID generated from the Dashboard
+                key: "rzp_test_ViGqZKgSbS4BQG", 
                 amount: payment.amount,
                 currency: payment.currency,
-                name: "Acme Corp", //your business name
+                name: "Real Estate", //your business name
                 description: "Test Transaction",
                 image: "https://example.com/your_logo",
                 order_id: success.data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
                 handler: async function (response) {
+                    
                     const body = {
                       ...response,
                       house_id:current_home._id,
@@ -212,6 +227,7 @@ const SingleRentHomeComponent =()=>{
                     const validateRes = await axios.post("/api/payments/validate",body);
                         if(installment_number==4){
                             try{
+                               
                                await axios.post("/api/users/ownership",{email:user.email,house_id:current_home._id});
                                navigate('/');
                                dispatch(HideLoading());
@@ -262,17 +278,16 @@ const SingleRentHomeComponent =()=>{
 
 
     const handlePayment2 = async (e,installment_number,feeo) => {
+        const uniqueReceipt = `receipt_${Date.now()}`; 
         dispatch(ShowLoading());
         let ser = 100;
         if(feeo==-1){
-            // console.log("3rf4f4g4g4t");
-            // ser = (parseInt(current_home.fees, 10)/4)*100;
             ser = 200;
         }
         const payment = {
             amount: ser,
             currency: "USD",
-            receipt: "qwsaq1"
+            receipt: uniqueReceipt
         };
         if(installment_number==0 && (user.orderlist.length!=0 || user.rent_home_id!=null)){
             dispatch(HideLoading());

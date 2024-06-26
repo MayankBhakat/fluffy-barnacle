@@ -17,7 +17,7 @@ function Sell_RentHomeCenter(){
   const [sater2,setSater2] = useState(1);
   const [curr_state1,setCurr_state1] = useState("werett2");
   const [curr_state2,setCurr_state2] = useState("werett");
-    const [formData,setFormData] = useState({
+  const [formData,setFormData] = useState({
             image:[1,1,1],
             city:"",
             type:"",

@@ -92,7 +92,7 @@ html {
   
   .login-box a:hover {
     background: #03e9f4;
-    color: #fff;
+    color: #fff !important;
     border-radius: 5px;
     box-shadow: 0 0 5px #03e9f4,
                 0 0 25px #03e9f4,
@@ -163,7 +163,7 @@ html {
   
   .login-box a span:nth-child(4) {
     bottom: -100%;
-    left: 0;
+    left: -16px !important;
     width: 2px;
     height: 100%;
     background: linear-gradient(360deg, transparent, #03e9f4);
@@ -213,14 +213,14 @@ html {
     left: 0;
     height: 20px;
     width: 20px;
-    background-color: gold !important; /* Change to golden color */
+    background-color: gold !important; 
     border: 1px solid #ccc;
     border-radius: 4px;
-    transition: background-color 0.3s ease; /* Add transition effect */
+    transition: background-color 0.3s ease; 
   }
 
   .custom-checkbox input:checked ~ .checkmark {
-    background-color: #00bcd4; /* Change to cyan when checked */
+    background-color: #00bcd4; 
   }
 
   .checkmark:after {

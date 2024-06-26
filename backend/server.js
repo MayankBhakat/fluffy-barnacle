@@ -9,10 +9,15 @@ const {Server} = require("socket.io");
 const {createServer} = require("http");
 
 const port = 5050;
+
+
+
+
 const app = express();
 
-
+//Create an http server
 const httpServer = createServer(app);
+//Initialize socket with the HTTp server
 global.io = new Server(httpServer);
 
 // Start the cron job
@@ -63,21 +68,31 @@ app.use((err, req, res, next) => {
 
 httpServer.listen(port,()=>console.log(`Server running on port ${port}`))
 
-const admins = [];
+let admins = [];
 let activeChats = [];
 function get_random(array) {
    return array[Math.floor(Math.random() * array.length)]; 
 }
 
+//Connection between backend and frontend
+//Socket is the websocket that initiates the 2 way
 io.on("connection", (socket) => {
+
+  //Server connects to admin
+  //When admin logs in
   socket.on("admin connected with server", (adminName) => {
     admins.push({ id: socket.id, admin: adminName });
   });
   console.log(admins);
+
+  //client sends message to socket
+  //This is connection to frontend listening to this message from client side
   socket.on("client sends message", (msg) => {
     if (admins.length === 0) {
       socket.emit("no admin", "");
     } else {
+
+      //Sending the message only to target admin
        let client = activeChats.find((client) => client.clientId === socket.id);
         let targetAdminId;
         if (client) {
@@ -87,14 +102,20 @@ io.on("connection", (socket) => {
            activeChats.push({ clientId: socket.id, adminId: admin.id });
            targetAdminId = admin.id;
         }
+
+        //Socket send messge to target admin
       socket.broadcast.to(targetAdminId).emit("server sends message from client to admin", {
           user: socket.id,
-        message: msg,
+          message: msg,
       });
     }
   });
 
+
+  //Admin sends message
   socket.on("admin sends message", ({ user,message }) => {
+
+    //Server sends message to clients
     socket.broadcast.to(user).emit("server sends message from admin to client", message);
   });
 
@@ -106,6 +127,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", (reason) => {
     // admin disconnected
+    //The socket chatroom is removed
     const removeIndex = admins.findIndex((item) => item.id === socket.id);
     if (removeIndex !== -1) {
       admins.splice(removeIndex, 1);

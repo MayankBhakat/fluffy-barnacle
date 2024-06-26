@@ -218,7 +218,7 @@
   
    .a1 span:nth-child(4) {
     bottom: -100%;
-    left: 0;
+    left: -16px !important;
     width: 2px;
     padding:0px;
     height: 100%;

@@ -252,10 +252,7 @@ const add_home = async(req,res,next) =>{
             } catch (error) {
                 console.error("Error uploading file to Cloudinary:", error);
             }
-        } 
-        
-      
-        
+        }  
         try{
            const home = await SingleHome.create({
             image1 : urls[0].url,

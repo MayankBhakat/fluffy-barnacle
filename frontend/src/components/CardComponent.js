@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { ShowLoading,HideLoading } from "../redux/alertsSlice";
 
 function CardComponent(props){
+   console.log(props);
    const dispatch = useDispatch();
    const navigate = useNavigate();
    const selectHome = () =>{
@@ -38,7 +39,17 @@ function CardComponent(props){
        
         paddingBottom:"0px"
         }}>
-                  <span style={{ fontWeight:"bold" ,marginLeft:"0px"}}> ${props.house.fees}</span> <span style={{fontSize:"15px",margin:"-10px",color:"gray"}} className="font-weight-light">/month</span>
+         
+                {props.house.sell_rent=="sell" 
+         ?
+         <>
+         <span style={{ fontWeight:"bold" ,marginLeft:"0px"}}> ${props.house.fees}</span> 
+         </>
+         :
+         <>
+         <span style={{ fontWeight:"bold" ,marginLeft:"0px"}}> ${props.house.fees}</span> <span style={{fontSize:"15px",margin:"-10px",color:"gray"}} className="font-weight-light">/month</span>
+         </>}
+
         </div>
         <div style={{marginLeft:"31px",fontSize:"35px",fontWeight:"Bold"}}>Palm Harbor</div>
         <div style={{marginLeft:"31px",fontSize:"15px",color:"#8C8F9E",marginTop:"-10px"}} className="fw-bolder">2699 Green Valley Highland,ytraet</div>

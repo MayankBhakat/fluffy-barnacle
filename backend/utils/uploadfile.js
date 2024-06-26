@@ -15,17 +15,21 @@ cloudinary.config({
 });
 
 
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    //first argument is reffering to error.null means no error
+    //second argument is referring to the folder where it is stored(relative path)
       cb(null, './uploads/');
   },
   filename: function (req, file, cb) {
+      //first argument is reffering to error.null means no error
       cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
   }
 });
 
 const fileFilter = (req, file, cb) => {
+  //first indicates no error
+  //second indicates file should be accepted
   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
       cb(null, true);
   } else {
@@ -35,6 +39,7 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: storage,
+  //1 MB
   limits: { fileSize: 1024 * 1024},
   fileFilter: fileFilter
 });

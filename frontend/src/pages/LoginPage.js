@@ -24,6 +24,7 @@ function LoginPage () {
       dispatch(HideLoading());
       toast.success(response.data.message);
       localStorage.setItem("access_token", response.data.data);
+      localStorage.setItem("firstTime", 0);
       navigate("/");
       
     } catch (error) {
@@ -34,13 +35,13 @@ function LoginPage () {
     }
   };
 
-  const register = async () =>{
+  const register = () =>{
     dispatch(ShowLoading());
     navigate("/register");
     dispatch(HideLoading());
   }
 
-  const forgot_password = async () =>{
+  const forgot_password = () =>{
     dispatch(ShowLoading());
     navigate("/forgot_password");
     dispatch(HideLoading());
@@ -65,7 +66,7 @@ function LoginPage () {
             <input type="text"  
              value={user.email}
              onChange={(e) => setUser({ ...user, email: e.target.value })} />
-            <label>Username</label>
+            <label>User Email</label>
           </div>
           <div className="user-box">
             <input type="password" 
@@ -78,21 +79,21 @@ function LoginPage () {
       
       </div>
       
-          <a onClick={login}>
+          <a onClick={login} style={{color:"#00bcd4"}}>
             <span></span>
             <span></span>
             <span></span>
             <span></span>
             Submit
           </a>
-          <a className="register" onClick={register}>
+          <a className="register" style={{color:"#00bcd4"}} onClick={register}>
             <span></span>
             <span></span>
             <span></span>
             <span></span>
             Register
           </a>
-          <a onClick={forgot_password}>
+          <a onClick={forgot_password} style={{color:"#00bcd4"}}>
           <span></span>
             <span></span>
             <span></span>

@@ -28,6 +28,7 @@ function Modal_2({ setShowPopup ,install,email,house,rent_or_sell,user_id}) {
     try{
    
       if(rent_or_sell=="sell"){
+        
       const response = await axios.post("/api/users/cancel_payment",body);
       }
       else{

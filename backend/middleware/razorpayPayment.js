@@ -11,22 +11,22 @@ dotenv.config();
 
 
 const razorpay_payment = async(req,res,next) =>{
-try{
-    const razorpay = new Razorpay({
-        key_id: process.env.RAZORPAY_KEY_ID,
-        key_secret: process.env.RAZORPAY_SECRET,
-    });
+    try{
+        const razorpay = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_SECRET,
+        });
 
-    const options = req.body;
-    const order = await razorpay.orders.create(options);
-    if(!order){
-        return res.status(500).send("Error");
+        const options = req.body;
+        const order = await razorpay.orders.create(options);
+        if(!order){
+            return res.status(500).send("Error");
+        }
+        res.json(order);
+    }catch(error){
+        console.log(error);
+        res.status(500).send("Error");
     }
-    res.json(order);
-}catch(error){
-    console.log(error);
-    res.status(500).send("Error");
-}
 
 }
 
@@ -74,10 +74,6 @@ const razorpay_validate= async(req,res,next) =>{
         four.setMonth(now.getMonth()+10);
 
 
-        // const one = new Date(now.getTime() + 1 * 60000); // 1 minute
-        // const two = new Date(now.getTime() + 3 * 60000); // 3 minutes
-        // const three = new Date(now.getTime() + 6 * 60000); // 6 minutes
-        // const four = new Date(now.getTime() + 10 * 60000); // 10 minutes
 
         const newOrderItem = {
           house_id: house_id,
@@ -135,6 +131,23 @@ const razorpay_validate= async(req,res,next) =>{
         if(installment_number==4){
           order.installment_4.status=true;
           house.status.sell_order.installment_4.status=true;
+
+          //Chatgpt please write ur logic here
+          try {
+            await Installment.deleteMany({
+                user_id: user_id,
+                house_id: house_id,
+                installment_number: { $in: ["1", "2", "3", "4"] }
+            });
+            console.log("Installments deleted successfully");
+        } catch (error) {
+            console.log("Error deleting installments:", error);
+            return res.status(500).send({
+                success: false,
+                message: "ERROR IN DELETING INSTALLMENTS",
+            });
+        }
+        
         }
       }
       await house.save();

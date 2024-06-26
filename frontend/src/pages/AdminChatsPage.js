@@ -17,7 +17,12 @@ function AdminChatsPage () {
    
       <Col md={12}>
         <Row>
-        {Object.entries(chatRooms).map((chatRoom, index) => (
+
+        {/* Here we display all chatrooms */}
+        {/* It is an objecjt
+        [0] is key ----> value is SocketUserId
+        [1] is object -----> value is Chat Text between user and admin */}
+            {Object.entries(chatRooms).map((chatRoom, index) => (
             <AdminChatsPageComponent key={index} chatRoom={chatRoom} roomIndex={index + 1} socket={socket} socketUser={chatRoom[0]}  />
           ))}
         </Row>

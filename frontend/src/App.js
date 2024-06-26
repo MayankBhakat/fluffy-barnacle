@@ -12,7 +12,7 @@ import SingleRentHomePage from "./pages/SingleRentHomePage";
 import AgentsPage from "./pages/AgentsPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Loader from "./components/Loader";
-import { useSelector } from "react-redux";
+import { useSelector ,useDispatch} from "react-redux";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoutes from "./authRoutes/protectedRoutes";
 import PublicRoutes from "./authRoutes/publicRoutes";
@@ -23,8 +23,61 @@ import Current_orderPage from "./pages/Current_orderPage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
 import AdminChatsPage from "./pages/AdminChatsPage";
+
+
+
+import {useState,useEffect} from 'react';
+import socketIOClient from "socket.io-client";
+import { SetChatRooms ,SetSocket, SetMessageReceived , RemoveChatRoom} from "./redux/chatSlice";
+
+
+
 function App() {
+
+
+  const {chatRooms} = useSelector((state) => state.chat);
+  const {messageReceived} = useSelector((state) => state.chat);
+  const dispatch = useDispatch();
+  const { user } = useSelector(state => state.users);
+  const [socket, setSocket] = useState(null);
+
+
+
   const { loading } = useSelector((state) => state.alerts);
+
+
+  useEffect(() => {
+
+    if (user?.role === 'admin') {
+      
+      
+      const newSocket = socketIOClient();
+    
+  
+      newSocket.emit("admin connected with server", user?.name + Math.floor(Math.random() * 1000000000000));
+      //Socket emits that admin has logged in and has connected to the server
+     
+     
+      // console.log(firstTime);
+      //Here the server is sending measge to the admin from client
+      newSocket.on('server sends message from client to admin', ({user, message }) => {
+  
+        //Redux slicers are used here
+        dispatch(SetSocket({ socket: newSocket }));
+        dispatch(SetChatRooms({ user: user, message: message, isAdmin: false }));
+        dispatch(SetMessageReceived({ message: true }));
+      });
+  
+      //If the client refreshed or swirches pages chatroom disconnected
+      newSocket.on("disconnected",({reason,socketId}) =>{
+        dispatch(RemoveChatRoom({socketId:socketId}));
+      })
+      return () => newSocket.disconnect();
+    }
+  }, [user]);
+
+
+
   return (
     <div className="App">
     {loading && <Loader />}
